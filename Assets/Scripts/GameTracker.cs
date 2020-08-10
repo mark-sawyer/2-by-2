@@ -15,6 +15,10 @@ public class GameTracker : MonoBehaviour {
                 ray.collider.GetComponent<Square>().OnTriggerEnter2D(ray.collider);
             }
         }
+
+        if (Input.GetKeyDown("space")) {
+            GameEvents.spacePressed.Invoke();
+        }
     }
 }
 

@@ -12,6 +12,8 @@ public class Square : MonoBehaviour {
     private bool beingHeld;
 
     void Start() {
+        GameEvents.spacePressed.AddListener(rotateClockwise);
+
         // Get four random colours, at least two unique.
         for (int i = 0; i < 4; i++) {
             colours[i] = (Colour)Random.Range(0, 4);
@@ -23,8 +25,36 @@ public class Square : MonoBehaviour {
             }
         }
 
+        setColourSprites();
+    }
+
+    void Update() {
+        if (beingHeld) {
+            if (!Input.GetMouseButton(0)) {
+                beingHeld = false;
+            }
+            else {
+                Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                transform.position = mousePos;
+            }
+        }
+    }
+
+    private void rotateClockwise() {
+        if (positionInQueue == 1) {
+            Colour holdColour = colours[0];
+            colours[0] = colours[3];
+            colours[3] = colours[2];
+            colours[2] = colours[1];
+            colours[1] = holdColour;
+        }
+
+        setColourSprites();
+    }
+
+    private void setColourSprites() {
         for (int i = 0; i < 4; i++) {
-            switch(colours[i]) {
+            switch (colours[i]) {
                 case Colour.RED:
                     transform.GetChild(i).GetComponent<SpriteRenderer>().sprite = redColour;
                     break;
@@ -37,18 +67,6 @@ public class Square : MonoBehaviour {
                 case Colour.YELLOW:
                     transform.GetChild(i).GetComponent<SpriteRenderer>().sprite = yellowColour;
                     break;
-            }
-        }
-    }
-
-    void Update() {
-        if (beingHeld) {
-            if (!Input.GetMouseButton(0)) {
-                beingHeld = false;
-            }
-            else {
-                Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                transform.position = mousePos;
             }
         }
     }
