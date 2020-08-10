@@ -8,6 +8,8 @@ public class Square : MonoBehaviour {
     public Sprite blueColour;
     public Sprite yellowColour;
     public Colour[] colours = new Colour[4];
+    private int positionInQueue = 1;
+    private bool beingHeld;
 
     void Start() {
         // Get four random colours, at least two unique.
@@ -40,7 +42,21 @@ public class Square : MonoBehaviour {
     }
 
     void Update() {
-        
+        if (beingHeld) {
+            if (!Input.GetMouseButton(0)) {
+                beingHeld = false;
+            }
+            else {
+                Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                transform.position = mousePos;
+            }
+        }
     }
-}
 
+    public void OnTriggerEnter2D(Collider2D collision) {
+        if (positionInQueue == 1) {
+            beingHeld = true;
+        }
+    }
+
+}
