@@ -9,6 +9,7 @@ public class GameTracker : MonoBehaviour {
     public static GameObject[,] nodes;
     public static int SIDE_LENGTH = 10;
     public static Vector2 POSITION_IN_QUEUE_ONE = new Vector2(6.5f, 3.75f);
+    public static bool holdingSquare;
 
     void Start() {
         // Instantiate the slots
@@ -48,7 +49,8 @@ public class GameTracker : MonoBehaviour {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D ray = Physics2D.Raycast(mousePos, Vector2.zero);
             if (ray.collider != null & ray.collider.tag == "square") {
-                ray.collider.GetComponent<Square>().OnTriggerEnter2D(ray.collider);
+                holdingSquare = true;
+                ray.collider.GetComponent<Square>().startBeingHeld();
             }
         }
 
@@ -62,6 +64,7 @@ public class GameTracker : MonoBehaviour {
 }
 
 public enum Colour {
+    NONE,
     RED,
     GREEN,
     BLUE,

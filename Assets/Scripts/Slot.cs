@@ -7,6 +7,7 @@ public class Slot : MonoBehaviour {
     public Sprite greenColour;
     public Sprite blueColour;
     public Sprite yellowColour;
+    public Colour colour;
     private GameObject upNeighbourSlot;
     private GameObject rightNeighbourSlot;
     private GameObject downNeighbourSlot;
@@ -33,5 +34,31 @@ public class Slot : MonoBehaviour {
         if (ray.collider != null) {
             leftNeighbourSlot = ray.collider.gameObject;
         }
+    }
+
+    public void setColour(Colour newColour) {
+        colour = newColour;
+
+        switch (colour) {
+            case Colour.RED:
+                GetComponent<SpriteRenderer>().enabled = true;
+                GetComponent<SpriteRenderer>().sprite = redColour;
+                break;
+            case Colour.GREEN:
+                GetComponent<SpriteRenderer>().enabled = true;
+                GetComponent<SpriteRenderer>().sprite = greenColour;
+                break;
+            case Colour.BLUE:
+                GetComponent<SpriteRenderer>().enabled = true;
+                GetComponent<SpriteRenderer>().sprite = blueColour;
+                break;
+            case Colour.YELLOW:
+                GetComponent<SpriteRenderer>().enabled = true;
+                GetComponent<SpriteRenderer>().sprite = yellowColour;
+                break;
+            case Colour.NONE:
+                GetComponent<SpriteRenderer>().enabled = false;
+                break;
+        }        
     }
 }
