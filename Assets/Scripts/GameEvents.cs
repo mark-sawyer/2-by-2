@@ -4,5 +4,6 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class GameEvents {
-    public static UnityEvent spacePressed = new UnityEvent();
+    public static UnityEvent rightPressed = new UnityEvent();
+    public static UnityEvent leftPressed = new UnityEvent();
 }

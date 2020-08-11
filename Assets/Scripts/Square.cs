@@ -12,7 +12,8 @@ public class Square : MonoBehaviour {
     private bool beingHeld;
 
     void Start() {
-        GameEvents.spacePressed.AddListener(rotateClockwise);
+        GameEvents.rightPressed.AddListener(rotateClockwise);
+        GameEvents.leftPressed.AddListener(rotateCounterClockwise);
 
         // Get four random colours, at least two unique.
         for (int i = 0; i < 4; i++) {
@@ -31,7 +32,20 @@ public class Square : MonoBehaviour {
     void Update() {
         if (beingHeld) {
             if (!Input.GetMouseButton(0)) {
+                // Object was released. Check if node was click at location.
                 beingHeld = false;
+                bool hitNode = false;
+                RaycastHit2D[] rays = Physics2D.RaycastAll(transform.position, Vector2.zero);
+                for (int i = 0; i < rays.Length; i++) {
+                    if (rays[i].collider.tag == "node") {
+                        transform.position = rays[i].collider.transform.position;
+                        hitNode = true;
+                        break;
+                    }
+                }
+                if (!hitNode) {
+                    transform.position = GameTracker.POSITION_IN_QUEUE_ONE;
+                }
             }
             else {
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -47,6 +61,18 @@ public class Square : MonoBehaviour {
             colours[3] = colours[2];
             colours[2] = colours[1];
             colours[1] = holdColour;
+        }
+
+        setColourSprites();
+    }
+
+    private void rotateCounterClockwise() {
+        if (positionInQueue == 1) {
+            Colour holdColour = colours[0];
+            colours[0] = colours[1];
+            colours[1] = colours[2];
+            colours[2] = colours[3];
+            colours[3] = holdColour;
         }
 
         setColourSprites();
