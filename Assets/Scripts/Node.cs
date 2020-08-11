@@ -37,7 +37,16 @@ public class Node : MonoBehaviour {
         bool bottomRightEmpty = bottomRightSlot.GetComponent<Slot>().colour == Colour.NONE;
         bool bottomLeftEmpty = bottomLeftSlot.GetComponent<Slot>().colour == Colour.NONE;
 
-        return topLeftEmpty & topRightEmpty & bottomRightEmpty & bottomLeftEmpty;
+        return topLeftEmpty && topRightEmpty && bottomRightEmpty && bottomLeftEmpty;
+    }
+
+    public bool neighboursHaveSingleColour() {
+        Colour topLeftColour = topLeftSlot.GetComponent<Slot>().colour;
+        Colour topRightColour = topRightSlot.GetComponent<Slot>().colour;
+        Colour bottomRightColour = bottomRightSlot.GetComponent<Slot>().colour;
+        Colour bottomLeftColour = bottomLeftSlot.GetComponent<Slot>().colour;
+
+        return topLeftColour != Colour.NONE && topLeftColour == topRightColour && topLeftColour == bottomRightColour && topLeftColour == bottomLeftColour;
     }
 
     public void setNeighbourColours(Colour[] colours) {

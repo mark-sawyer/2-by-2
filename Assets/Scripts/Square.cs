@@ -64,6 +64,7 @@ public class Square : MonoBehaviour {
                 if (overValidNode) {
                     validNode.setNeighbourColours(colours);
                     Destroy(gameObject);
+                    GameTracker.checkNodesForSingleColour();
                 }
                 else {
                     setAlpha(1);
