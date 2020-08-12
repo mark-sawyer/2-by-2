@@ -76,18 +76,18 @@ public class GameTracker : MonoBehaviour {
     }
 
     public void dealWithSquareBeingPlaced() {
-        playable = false;
-
         // Instantiate new square
         GameObject newSquare = Instantiate(square, QUEUE_POSITIONS[3], Quaternion.identity);
         newSquare.GetComponent<Square>().positionInQueue = 3;
 
-        // Loop block clears until there aren't any
+        playable = false;
+        // Loop this when you have it working...
         while (!playable) {
-            // Check nodes for single colour and then slot flags if they are
+            playable = true;
+            // Check nodes for single colour and then set slot flags if they are
             for (int row = 0; row < SIDE_LENGTH - 1; row++) {
                 for (int col = 0; col < SIDE_LENGTH - 1; col++) {
-                    nodes[row, col].GetComponent<Node>().checkNeighboursHaveSingleColour();
+                    nodes[row, col].GetComponent<Node>().checkNeighboursHaveSingleColour();  // playable set false if single colour node found
                 }
             }
 

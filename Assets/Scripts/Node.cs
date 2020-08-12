@@ -53,6 +53,7 @@ public class Node : MonoBehaviour {
             topLeftColour == bottomLeftColour;
 
         if (allSlotsTheSameColour) {
+            GameTracker.playable = false;
             topLeftSlot.GetComponent<Slot>().setNeighbourFlags(0);
             topRightSlot.GetComponent<Slot>().setNeighbourFlags(1);
             bottomRightSlot.GetComponent<Slot>().setNeighbourFlags(2);
