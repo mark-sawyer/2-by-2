@@ -43,5 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59d968e4b90b44469ca6ecb4d1a18f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  square: {fileID: 4266497463033160000, guid: 881266a2b77eb084fa9daa00d94837b3, type: 3}
   slot: {fileID: 2778931262244212567, guid: 298fe3c2e8fb2e64cbc6ba9241219b8f, type: 3}
   node: {fileID: 3967951184661655762, guid: 5a40d9db586853144b5a6afe908d1680, type: 3}

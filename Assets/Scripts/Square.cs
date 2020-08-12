@@ -8,13 +8,14 @@ public class Square : MonoBehaviour {
     public Sprite blueColour;
     public Sprite yellowColour;
     public Colour[] colours = new Colour[4];
-    private int positionInQueue = 1;
+    public int positionInQueue;
     private bool beingHeld;
     private bool isTransparent;
 
     void Start() {
         GameEvents.rightPressed.AddListener(rotateClockwise);
         GameEvents.leftPressed.AddListener(rotateCounterClockwise);
+        GameEvents.squarePlaced.AddListener(moveUpInQueue);
 
         // Get four random colours, at least two unique.
         for (int i = 0; i < 4; i++) {
@@ -64,18 +65,18 @@ public class Square : MonoBehaviour {
                 if (overValidNode) {
                     validNode.setNeighbourColours(colours);
                     Destroy(gameObject);
-                    GameTracker.checkNodesForSingleColour();
+                    GameEvents.squarePlaced.Invoke();
                 }
                 else {
                     setAlpha(1);
-                    transform.position = GameTracker.POSITION_IN_QUEUE_ONE;
+                    transform.position = GameTracker.QUEUE_POSITIONS[0];
                 }
             }
         }
     }
 
     private void rotateClockwise() {
-        if (positionInQueue == 1) {
+        if (positionInQueue == 0) {
             Colour holdColour = colours[0];
             colours[0] = colours[3];
             colours[3] = colours[2];
@@ -87,7 +88,7 @@ public class Square : MonoBehaviour {
     }
 
     private void rotateCounterClockwise() {
-        if (positionInQueue == 1) {
+        if (positionInQueue == 0) {
             Colour holdColour = colours[0];
             colours[0] = colours[1];
             colours[1] = colours[2];
@@ -118,10 +119,8 @@ public class Square : MonoBehaviour {
     }
 
     public void startBeingHeld() {
-        if (positionInQueue == 1) {
-            beingHeld = true;
-            setAlpha(0.5f);
-        }
+        beingHeld = true;
+        setAlpha(0.5f);
     }
 
     public void setAlpha(float alphaVal) {
@@ -133,5 +132,16 @@ public class Square : MonoBehaviour {
         }
 
         isTransparent = alphaVal == 0.5f;
+    }
+
+    public void moveUpInQueue() {
+        if (positionInQueue != 0) {
+            positionInQueue--;
+            setQueuePosition(positionInQueue);
+        }
+    }
+
+    public void setQueuePosition(int positionBeingSet) {
+        transform.position = GameTracker.QUEUE_POSITIONS[positionBeingSet];
     }
 }

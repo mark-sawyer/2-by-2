@@ -3,15 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameTracker : MonoBehaviour {
+    public GameObject square;
     public GameObject slot;
     public GameObject node;
     public static GameObject[,] slots;
     public static GameObject[,] nodes;
     public static int SIDE_LENGTH = 10;
-    public static Vector2 POSITION_IN_QUEUE_ONE = new Vector2(6.5f, 3.75f);
     public static bool holdingSquare;
+    public static Vector2[] QUEUE_POSITIONS = { new Vector2(6.5f, 3.75f), new Vector2(6.5f, 1.25f),
+                                                new Vector2(6.5f, -1.25f), new Vector2(6.5f, -3.75f) };
 
     void Start() {
+        GameEvents.squarePlaced.AddListener(dealWithSquareBeingPlaced);
+
+        // Instantiate the four squares in the queue
+        for (int i = 0; i < 4; i++) {
+            GameObject queueSquare = Instantiate(square, QUEUE_POSITIONS[i], Quaternion.identity);
+            queueSquare.GetComponent<Square>().positionInQueue = i;
+        }
+
         // Instantiate the slots
         slots = new GameObject[SIDE_LENGTH, SIDE_LENGTH];
         for (int row = 0; row < SIDE_LENGTH; row++) {
@@ -48,7 +58,7 @@ public class GameTracker : MonoBehaviour {
         if (Input.GetMouseButtonDown(0)) {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D ray = Physics2D.Raycast(mousePos, Vector2.zero);
-            if (ray.collider != null & ray.collider.tag == "square") {
+            if (ray.collider != null && ray.collider.tag == "square" && ray.collider.GetComponent<Square>().positionInQueue == 0) {
                 holdingSquare = true;
                 ray.collider.GetComponent<Square>().startBeingHeld();
             }
@@ -62,14 +72,20 @@ public class GameTracker : MonoBehaviour {
         }
     }
 
-    public static void checkNodesForSingleColour() {
+    public void dealWithSquareBeingPlaced() {
+        // Instantiate new square
+        GameObject newSquare = Instantiate(square, QUEUE_POSITIONS[3], Quaternion.identity);
+        newSquare.GetComponent<Square>().positionInQueue = 3;
+
+        // Check nodes for single colour
         for (int row = 0; row < SIDE_LENGTH - 1; row++) {
             for (int col = 0; col < SIDE_LENGTH - 1; col++) {
                 if (nodes[row, col].GetComponent<Node>().neighboursHaveSingleColour()) {
-                    print("bingo");
+                    //print("bingo");
                 }
             }
         }
+
     }
 }
 
