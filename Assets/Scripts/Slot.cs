@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Slot : MonoBehaviour {
-    public Sprite redColour;
-    public Sprite greenColour;
-    public Sprite blueColour;
-    public Sprite yellowColour;
+    public Animator anim;
     public Colour colour;
     private GameObject upNeighbourSlot;
     private GameObject rightNeighbourSlot;
@@ -46,23 +43,19 @@ public class Slot : MonoBehaviour {
 
         switch (colour) {
             case Colour.RED:
-                GetComponent<SpriteRenderer>().enabled = true;
-                GetComponent<SpriteRenderer>().sprite = redColour;
+                anim.SetTrigger("become red");
                 break;
             case Colour.GREEN:
-                GetComponent<SpriteRenderer>().enabled = true;
-                GetComponent<SpriteRenderer>().sprite = greenColour;
+                anim.SetTrigger("become green");
                 break;
             case Colour.BLUE:
-                GetComponent<SpriteRenderer>().enabled = true;
-                GetComponent<SpriteRenderer>().sprite = blueColour;
+                anim.SetTrigger("become blue");
                 break;
             case Colour.YELLOW:
-                GetComponent<SpriteRenderer>().enabled = true;
-                GetComponent<SpriteRenderer>().sprite = yellowColour;
+                anim.SetTrigger("become yellow");
                 break;
             case Colour.NONE:
-                GetComponent<SpriteRenderer>().enabled = false;
+                anim.SetTrigger("disappear");
                 break;
         }        
     }

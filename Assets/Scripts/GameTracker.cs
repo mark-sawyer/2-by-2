@@ -10,6 +10,7 @@ public class GameTracker : MonoBehaviour {
     public static GameObject[,] nodes;
     public static int SIDE_LENGTH = 10;
     public static bool holdingSquare;
+    public static bool playable = true;
     public static Vector2[] QUEUE_POSITIONS = { new Vector2(6.5f, 3.75f), new Vector2(6.5f, 1.25f),
                                                 new Vector2(6.5f, -1.25f), new Vector2(6.5f, -3.75f) };
 
@@ -55,12 +56,14 @@ public class GameTracker : MonoBehaviour {
     }
 
     void Update() {
-        if (Input.GetMouseButtonDown(0)) {
-            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D ray = Physics2D.Raycast(mousePos, Vector2.zero);
-            if (ray.collider != null && ray.collider.tag == "square" && ray.collider.GetComponent<Square>().positionInQueue == 0) {
-                holdingSquare = true;
-                ray.collider.GetComponent<Square>().startBeingHeld();
+        if (playable) {
+            if (Input.GetMouseButtonDown(0)) {
+                Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit2D ray = Physics2D.Raycast(mousePos, Vector2.zero);
+                if (ray.collider != null && ray.collider.tag == "square" && ray.collider.GetComponent<Square>().positionInQueue == 0) {
+                    holdingSquare = true;
+                    ray.collider.GetComponent<Square>().startBeingHeld();
+                }
             }
         }
 
@@ -73,31 +76,36 @@ public class GameTracker : MonoBehaviour {
     }
 
     public void dealWithSquareBeingPlaced() {
+        playable = false;
+
         // Instantiate new square
         GameObject newSquare = Instantiate(square, QUEUE_POSITIONS[3], Quaternion.identity);
         newSquare.GetComponent<Square>().positionInQueue = 3;
 
-        // Check nodes for single colour and then slot flags if they are
-        for (int row = 0; row < SIDE_LENGTH - 1; row++) {
-            for (int col = 0; col < SIDE_LENGTH - 1; col++) {
-                nodes[row, col].GetComponent<Node>().checkNeighboursHaveSingleColour();
-            }
-        }
-
-        // Set all the colours to NONE for single colour nodes, remove the flag
-        for (int row = 0; row < SIDE_LENGTH - 1; row++) {
-            for (int col = 0; col < SIDE_LENGTH - 1; col++) {
-                if (nodes[row, col].GetComponent<Node>().allSlotsTheSameColour) {
-                    nodes[row, col].GetComponent<Node>().removeColours();
-                    nodes[row, col].GetComponent<Node>().allSlotsTheSameColour = false;
+        // Loop block clears until there aren't any
+        while (!playable) {
+            // Check nodes for single colour and then slot flags if they are
+            for (int row = 0; row < SIDE_LENGTH - 1; row++) {
+                for (int col = 0; col < SIDE_LENGTH - 1; col++) {
+                    nodes[row, col].GetComponent<Node>().checkNeighboursHaveSingleColour();
                 }
             }
-        }
 
-        // Resolve all slot colours
-        for (int row = 0; row < SIDE_LENGTH; row++) {
-            for (int col = 0; col < SIDE_LENGTH; col++) {
-                slots[row, col].GetComponent<Slot>().resolveFlags();
+            // Set all the colours to NONE for single colour nodes, remove the flag, play animation
+            for (int row = 0; row < SIDE_LENGTH - 1; row++) {
+                for (int col = 0; col < SIDE_LENGTH - 1; col++) {
+                    if (nodes[row, col].GetComponent<Node>().allSlotsTheSameColour) {
+                        nodes[row, col].GetComponent<Node>().removeColours();
+                        nodes[row, col].GetComponent<Node>().allSlotsTheSameColour = false;
+                    }
+                }
+            }
+
+            // Resolve all slot colours
+            for (int row = 0; row < SIDE_LENGTH; row++) {
+                for (int col = 0; col < SIDE_LENGTH; col++) {
+                    slots[row, col].GetComponent<Slot>().resolveFlags();
+                }
             }
         }
 

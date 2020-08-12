@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7954383686501387040}
   - component: {fileID: 2407309164780404985}
-  - component: {fileID: 4470722466771299599}
   - component: {fileID: 4736896272881914161}
+  - component: {fileID: 4733737168016546724}
+  - component: {fileID: 4362264931640612630}
   m_Layer: 0
   m_Name: slot
   m_TagString: Untagged
@@ -59,14 +60,47 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!212 &4470722466771299599
+--- !u!114 &4736896272881914161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2778931262244212567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4d3d5a993283e44b76f1d5e058c679, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 4733737168016546724}
+  colour: 0
+--- !u!95 &4733737168016546724
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2778931262244212567}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 93218d292d6e81e4d9fa88de3b5deb3b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!212 &4362264931640612630
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2778931262244212567}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -107,19 +141,3 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4736896272881914161
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2778931262244212567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd4d3d5a993283e44b76f1d5e058c679, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  redColour: {fileID: 21300000, guid: 2df4f7cd7870ae94eba942c015f8217a, type: 3}
-  greenColour: {fileID: 21300000, guid: 7f0c5e7647d53284b99ef24c8360a70b, type: 3}
-  blueColour: {fileID: 21300000, guid: bb2144ca6621d7e469692726620e4c20, type: 3}
-  yellowColour: {fileID: 21300000, guid: e2d811d6eb71fc745a79911abf55ce75, type: 3}

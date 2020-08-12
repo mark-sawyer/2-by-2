@@ -102,6 +102,7 @@ MonoBehaviour:
   blueColour: {fileID: 21300000, guid: bb2144ca6621d7e469692726620e4c20, type: 3}
   yellowColour: {fileID: 21300000, guid: e2d811d6eb71fc745a79911abf55ce75, type: 3}
   colours: 02000000020000000200000002000000
+  positionInQueue: 1
 --- !u!61 &8648753316437908811
 BoxCollider2D:
   m_ObjectHideFlags: 0
