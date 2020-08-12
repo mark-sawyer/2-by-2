@@ -11,6 +11,7 @@ public class GameTracker : MonoBehaviour {
     public static int SIDE_LENGTH = 10;
     public static bool holdingSquare;
     public static bool playable = true;
+    public static bool resolveColoursLoopBeenInvoked;
     public static Vector2[] QUEUE_POSITIONS = { new Vector2(6.5f, 3.75f), new Vector2(6.5f, 1.25f),
                                                 new Vector2(6.5f, -1.25f), new Vector2(6.5f, -3.75f) };
 
@@ -57,6 +58,7 @@ public class GameTracker : MonoBehaviour {
 
     void Update() {
         if (playable) {
+            resolveColoursLoopBeenInvoked = false;
             if (Input.GetMouseButtonDown(0)) {
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 RaycastHit2D ray = Physics2D.Raycast(mousePos, Vector2.zero);
@@ -81,31 +83,33 @@ public class GameTracker : MonoBehaviour {
         newSquare.GetComponent<Square>().positionInQueue = 3;
 
         playable = false;
-        // Loop this when you have it working...
-        while (!playable) {
-            playable = true;
-            // Check nodes for single colour and then set slot flags if they are
-            for (int row = 0; row < SIDE_LENGTH - 1; row++) {
-                for (int col = 0; col < SIDE_LENGTH - 1; col++) {
-                    nodes[row, col].GetComponent<Node>().checkNeighboursHaveSingleColour();  // playable set false if single colour node found
+        doAResolveColoursLoop();
+    }
+
+    public static void doAResolveColoursLoop() {
+        playable = true;
+
+        // Check nodes for single colour and then set slot flags if they are
+        for (int row = 0; row < SIDE_LENGTH - 1; row++) {
+            for (int col = 0; col < SIDE_LENGTH - 1; col++) {
+                nodes[row, col].GetComponent<Node>().checkNeighboursHaveSingleColour();  // playable set false if single colour node found
+            }
+        }
+
+        // Set all the colours to NONE for single colour nodes, remove the flag, play animation
+        for (int row = 0; row < SIDE_LENGTH - 1; row++) {
+            for (int col = 0; col < SIDE_LENGTH - 1; col++) {
+                if (nodes[row, col].GetComponent<Node>().allSlotsTheSameColour) {
+                    nodes[row, col].GetComponent<Node>().removeColours();
+                    nodes[row, col].GetComponent<Node>().allSlotsTheSameColour = false;
                 }
             }
+        }
 
-            // Set all the colours to NONE for single colour nodes, remove the flag, play animation
-            for (int row = 0; row < SIDE_LENGTH - 1; row++) {
-                for (int col = 0; col < SIDE_LENGTH - 1; col++) {
-                    if (nodes[row, col].GetComponent<Node>().allSlotsTheSameColour) {
-                        nodes[row, col].GetComponent<Node>().removeColours();
-                        nodes[row, col].GetComponent<Node>().allSlotsTheSameColour = false;
-                    }
-                }
-            }
-
-            // Resolve all slot colours
-            for (int row = 0; row < SIDE_LENGTH; row++) {
-                for (int col = 0; col < SIDE_LENGTH; col++) {
-                    slots[row, col].GetComponent<Slot>().resolveFlags();
-                }
+        // Resolve all slot colours
+        for (int row = 0; row < SIDE_LENGTH; row++) {
+            for (int col = 0; col < SIDE_LENGTH; col++) {
+                slots[row, col].GetComponent<Slot>().resolveFlags();
             }
         }
 
@@ -125,6 +129,7 @@ public class GameTracker : MonoBehaviour {
         }
     }
 }
+
 
 public enum Colour {
     NONE,

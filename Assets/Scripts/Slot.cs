@@ -145,4 +145,12 @@ public class Slot : MonoBehaviour {
 
         toBeDestroyed = false;
     }
+
+    public void invokeResolveLoop() {
+        print("we invoking");
+        if (!GameTracker.resolveColoursLoopBeenInvoked) {
+            GameTracker.resolveColoursLoopBeenInvoked = true;
+            GameTracker.doAResolveColoursLoop();
+        }
+    }
 }
