@@ -7,6 +7,7 @@ public class Node : MonoBehaviour {
     private GameObject topRightSlot;
     private GameObject bottomRightSlot;
     private GameObject bottomLeftSlot;
+    public bool allSlotsTheSameColour;
 
     public void setNeighbours() {
         RaycastHit2D ray;
@@ -40,13 +41,23 @@ public class Node : MonoBehaviour {
         return topLeftEmpty && topRightEmpty && bottomRightEmpty && bottomLeftEmpty;
     }
 
-    public bool neighboursHaveSingleColour() {
+    public void checkNeighboursHaveSingleColour() {
         Colour topLeftColour = topLeftSlot.GetComponent<Slot>().colour;
         Colour topRightColour = topRightSlot.GetComponent<Slot>().colour;
         Colour bottomRightColour = bottomRightSlot.GetComponent<Slot>().colour;
         Colour bottomLeftColour = bottomLeftSlot.GetComponent<Slot>().colour;
 
-        return topLeftColour != Colour.NONE && topLeftColour == topRightColour && topLeftColour == bottomRightColour && topLeftColour == bottomLeftColour;
+        allSlotsTheSameColour = topLeftColour != Colour.NONE &&
+            topLeftColour == topRightColour &&
+            topLeftColour == bottomRightColour &&
+            topLeftColour == bottomLeftColour;
+
+        if (allSlotsTheSameColour) {
+            topLeftSlot.GetComponent<Slot>().setNeighbourFlags(0);
+            topRightSlot.GetComponent<Slot>().setNeighbourFlags(1);
+            bottomRightSlot.GetComponent<Slot>().setNeighbourFlags(2);
+            bottomLeftSlot.GetComponent<Slot>().setNeighbourFlags(3);
+        }
     }
 
     public void setNeighbourColours(Colour[] colours) {
@@ -54,5 +65,12 @@ public class Node : MonoBehaviour {
         topRightSlot.GetComponent<Slot>().setColour(colours[1]);
         bottomRightSlot.GetComponent<Slot>().setColour(colours[2]);
         bottomLeftSlot.GetComponent<Slot>().setColour(colours[3]);
+    }
+
+    public void removeColours() {
+        topLeftSlot.GetComponent<Slot>().setColour(Colour.NONE);
+        topRightSlot.GetComponent<Slot>().setColour(Colour.NONE);
+        bottomRightSlot.GetComponent<Slot>().setColour(Colour.NONE);
+        bottomLeftSlot.GetComponent<Slot>().setColour(Colour.NONE);
     }
 }

@@ -77,15 +77,44 @@ public class GameTracker : MonoBehaviour {
         GameObject newSquare = Instantiate(square, QUEUE_POSITIONS[3], Quaternion.identity);
         newSquare.GetComponent<Square>().positionInQueue = 3;
 
-        // Check nodes for single colour
+        // Check nodes for single colour and then slot flags if they are
         for (int row = 0; row < SIDE_LENGTH - 1; row++) {
             for (int col = 0; col < SIDE_LENGTH - 1; col++) {
-                if (nodes[row, col].GetComponent<Node>().neighboursHaveSingleColour()) {
-                    //print("bingo");
+                nodes[row, col].GetComponent<Node>().checkNeighboursHaveSingleColour();
+            }
+        }
+
+        // Set all the colours to NONE for single colour nodes, remove the flag
+        for (int row = 0; row < SIDE_LENGTH - 1; row++) {
+            for (int col = 0; col < SIDE_LENGTH - 1; col++) {
+                if (nodes[row, col].GetComponent<Node>().allSlotsTheSameColour) {
+                    nodes[row, col].GetComponent<Node>().removeColours();
+                    nodes[row, col].GetComponent<Node>().allSlotsTheSameColour = false;
                 }
             }
         }
 
+        // Resolve all slot colours
+        for (int row = 0; row < SIDE_LENGTH; row++) {
+            for (int col = 0; col < SIDE_LENGTH; col++) {
+                slots[row, col].GetComponent<Slot>().resolveFlags();
+            }
+        }
+
+        // Check for game over
+        bool canPlaceASquare = false;
+        for (int row = 0; row < SIDE_LENGTH - 1; row++) {
+            for (int col = 0; col < SIDE_LENGTH - 1; col++) {
+                if (nodes[row, col].GetComponent<Node>().neighboursAreEmpty()) {
+                    canPlaceASquare = true;
+                    break;
+                }
+            }
+        }
+
+        if (!canPlaceASquare) {
+            print("Game Over!");
+        }
     }
 }
 

@@ -12,6 +12,11 @@ public class Slot : MonoBehaviour {
     private GameObject rightNeighbourSlot;
     private GameObject downNeighbourSlot;
     private GameObject leftNeighbourSlot;
+    private bool redFlag;
+    private bool greenFlag;
+    private bool blueFlag;
+    private bool yellowFlag;
+    private bool toBeDestroyed;
 
     public void setNeighbours() {
         RaycastHit2D ray;
@@ -60,5 +65,91 @@ public class Slot : MonoBehaviour {
                 GetComponent<SpriteRenderer>().enabled = false;
                 break;
         }        
+    }
+
+    public void setNeighbourFlags(int pos) {
+        toBeDestroyed = true;
+
+        switch (pos) {
+            case 0:
+                if (upNeighbourSlot != null && upNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                    upNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
+                }
+                if (leftNeighbourSlot != null && leftNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                    leftNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
+                }
+                break;
+            case 1:
+                if (upNeighbourSlot != null && upNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                    upNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
+                }
+                if (rightNeighbourSlot != null && rightNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                    rightNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
+                }
+                break;
+            case 2:
+                if (downNeighbourSlot != null && downNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                    downNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
+                }
+                if (rightNeighbourSlot != null && rightNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                    rightNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
+                }
+                break;
+            case 3:
+                if (downNeighbourSlot != null && downNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                    downNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
+                }
+                if (leftNeighbourSlot != null && leftNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                    leftNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
+                }
+                break;
+        }
+    }
+
+    public void setFlagBasedOnSlotColour(Colour slotToBeRemovedColour) {
+        switch(slotToBeRemovedColour) {
+            case Colour.RED:
+                redFlag = true;
+                break;
+            case Colour.GREEN:
+                greenFlag = true;
+                break;
+            case Colour.BLUE:
+                blueFlag = true;
+                break;
+            case Colour.YELLOW:
+                yellowFlag = true;
+                break;
+        }
+    }
+
+    public void resolveFlags() {
+        int flagNumber = 0;
+        if (redFlag) {
+            setColour(Colour.RED);
+            redFlag = false;
+            flagNumber++;
+        }
+        if (greenFlag) {
+            setColour(Colour.GREEN);
+            greenFlag = false;
+            flagNumber++;
+        }
+        if (blueFlag) {
+            setColour(Colour.BLUE);
+            blueFlag = false;
+            flagNumber++;
+        }
+        if (yellowFlag) {
+            setColour(Colour.YELLOW);
+            yellowFlag = false;
+            flagNumber++;
+        }
+
+        if (flagNumber > 1 | toBeDestroyed) {
+            setColour(Colour.NONE);
+        }
+
+        toBeDestroyed = false;
     }
 }
