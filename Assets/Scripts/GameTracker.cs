@@ -84,6 +84,9 @@ public class GameTracker : MonoBehaviour {
             if (slotsAreFinalised()) {
                 playable = true;
                 nextBackground.GetComponent<NextBackground>().setPlayable();
+                if (isGameOver()) {
+                    print("ya died, laddy");
+                }
             }
         }
     }
@@ -135,6 +138,20 @@ public class GameTracker : MonoBehaviour {
         }
 
         Over: return slotsDone;
+    }
+
+    private bool isGameOver() {
+        bool canPlaceSquare = false;
+        for (int row = 0; row < SIDE_LENGTH - 1; row++) {
+            for (int col = 0; col < SIDE_LENGTH - 1; col++) {
+                if (nodes[row, col].GetComponent<Node>().neighboursAreEmpty()) {
+                    canPlaceSquare = true;
+                    goto Over;
+                }
+            }
+        }
+
+    Over: return !canPlaceSquare;
     }
 }
 
