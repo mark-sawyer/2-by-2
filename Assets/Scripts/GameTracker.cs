@@ -6,6 +6,7 @@ public class GameTracker : MonoBehaviour {
     public GameObject square;
     public GameObject slot;
     public GameObject node;
+    public GameObject[] queuedSquares;
     public static GameObject[,] slots;
     public static GameObject[,] nodes;
     public static int SIDE_LENGTH = 10;
@@ -19,9 +20,10 @@ public class GameTracker : MonoBehaviour {
         GameEvents.squarePlaced.AddListener(dealWithSquareBeingPlaced);
 
         // Instantiate the four squares in the queue
+        queuedSquares = new GameObject[4];
         for (int i = 0; i < 4; i++) {
-            GameObject queueSquare = Instantiate(square, QUEUE_POSITIONS[i], Quaternion.identity);
-            queueSquare.GetComponent<Square>().positionInQueue = i;
+            queuedSquares[i] = Instantiate(square, QUEUE_POSITIONS[i], Quaternion.identity);
+            queuedSquares[i].GetComponent<Square>().positionInQueue = i;
         }
 
         // Instantiate the slots
@@ -60,11 +62,8 @@ public class GameTracker : MonoBehaviour {
         if (playable) {
             if (Input.GetMouseButtonDown(0)) {
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit2D ray = Physics2D.Raycast(mousePos, Vector2.zero);
-                if (ray.collider != null && ray.collider.tag == "square" && ray.collider.GetComponent<Square>().positionInQueue == 0) {
-                    holdingSquare = true;
-                    ray.collider.GetComponent<Square>().startBeingHeld();
-                }
+                holdingSquare = true;
+                queuedSquares[0].GetComponent<Square>().startBeingHeld();
             }
 
             if (Input.GetKeyDown("right") | Input.GetKeyDown("d")) {
@@ -89,9 +88,13 @@ public class GameTracker : MonoBehaviour {
     }
 
     public void dealWithSquareBeingPlaced() {
-        // Instantiate new square
-        GameObject newSquare = Instantiate(square, QUEUE_POSITIONS[3], Quaternion.identity);
-        newSquare.GetComponent<Square>().positionInQueue = 3;
+        // Shift current squares and instantiate new square
+        for (int i = 1; i < 4; i++) {
+            queuedSquares[i - 1] = queuedSquares[i];
+        }
+        queuedSquares[3] = Instantiate(square, QUEUE_POSITIONS[3], Quaternion.identity);
+        queuedSquares[3].GetComponent<Square>().positionInQueue = 3;
+
         playable = false;
         needToGoAgain = true;
     }

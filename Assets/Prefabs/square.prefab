@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8908425165163574663}
   - component: {fileID: 3964036306154615221}
   - component: {fileID: 4432936584644477729}
-  - component: {fileID: 8648753316437908811}
   m_Layer: 0
   m_Name: square
   m_TagString: square
@@ -103,32 +102,6 @@ MonoBehaviour:
   yellowColour: {fileID: 21300000, guid: e2d811d6eb71fc745a79911abf55ce75, type: 3}
   colours: 02000000020000000200000002000000
   positionInQueue: 1
---- !u!61 &8648753316437908811
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4266497463033160000}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2, y: 2}
-    newSize: {x: 2, y: 2}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 2, y: 2}
-  m_EdgeRadius: 0
 --- !u!1001 &230558977198722218
 PrefabInstance:
   m_ObjectHideFlags: 0

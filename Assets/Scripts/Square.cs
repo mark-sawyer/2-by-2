@@ -137,11 +137,7 @@ public class Square : MonoBehaviour {
     public void moveUpInQueue() {
         if (positionInQueue != 0) {
             positionInQueue--;
-            setQueuePosition(positionInQueue);
+            transform.position = GameTracker.QUEUE_POSITIONS[positionInQueue];
         }
-    }
-
-    public void setQueuePosition(int positionBeingSet) {
-        transform.position = GameTracker.QUEUE_POSITIONS[positionBeingSet];
     }
 }
