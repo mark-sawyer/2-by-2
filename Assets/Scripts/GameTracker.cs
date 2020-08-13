@@ -115,7 +115,6 @@ public class GameTracker : MonoBehaviour {
 
         // Player lost, game over sequence
         else {
-            BarTimer.doCountDown = false;
             gameOverBlocksTimer -= Time.deltaTime;
             if (gameOverBlocksTimer <= 0) {
                 if (gameOverSequenceRowsCompleted < 20) {
@@ -206,6 +205,7 @@ public class GameTracker : MonoBehaviour {
     public static void respondToSingleColourNode() {
         needToGoAgain = true;
         squaresCompleted++;
+        BarTimer.increaseTime();
         
         if (loopThroughNumber == 1) {
             score += 1;

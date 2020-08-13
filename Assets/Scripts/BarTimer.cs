@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BarTimer : MonoBehaviour {
-    public static float timeLeft = 10;
-    public static bool doCountDown = true;
+    public static float MAX_TIME_LEFT = 60;
+    public static float timeLeft = MAX_TIME_LEFT;
 
     void Update() {
-        if (doCountDown) {
+        transform.localScale = new Vector3(timeLeft / 6, 1, 0);
+        if (GameTracker.playerIsAlive && GameTracker.playable) {
             timeLeft -= Time.deltaTime;
-            transform.localScale = new Vector3(timeLeft / 6, 1, 0);
 
             if (timeLeft <= 0) {
                 GameTracker.playerIsAlive = false;
@@ -17,6 +17,22 @@ public class BarTimer : MonoBehaviour {
                 Destroy(GameObject.Find("timer bar right"));
                 Destroy(gameObject);
             }
+        }
+    }
+
+    public static void increaseTime() {
+        timeLeft += 10 * getTimeScalerFromSquaresCleared(GameTracker.squaresCompleted);
+        if (timeLeft > MAX_TIME_LEFT) {
+            timeLeft = MAX_TIME_LEFT;
+        }
+    }
+
+    public static float getTimeScalerFromSquaresCleared(int squaresCleared) {
+        if (squaresCleared <= 100) {
+            return Mathf.Exp(-0.01609437912f * squaresCleared);
+        }
+        else {
+            return Mathf.Exp(-0.01609437912f * 100);
         }
     }
 }
