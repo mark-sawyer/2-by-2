@@ -34,7 +34,7 @@ public class Square : MonoBehaviour {
     void Update() {
         if (beingHeld) {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            transform.position = mousePos;
+            transform.position = new Vector3(mousePos.x, mousePos.y, -1);
 
             // Check if valid node is under mouse
             bool overValidNode = false;

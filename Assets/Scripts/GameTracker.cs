@@ -7,14 +7,15 @@ public class GameTracker : MonoBehaviour {
     public GameObject slot;
     public GameObject node;
     public GameObject[] queuedSquares;
+    public GameObject nextBackground;
     public static GameObject[,] slots;
     public static GameObject[,] nodes;
     public static int SIDE_LENGTH = 10;
     public static bool holdingSquare;
     public static bool playable = true;
     public static bool needToGoAgain;
-    public static Vector2[] QUEUE_POSITIONS = { new Vector2(6.5f, 3.75f), new Vector2(6.5f, 1.25f),
-                                                new Vector2(6.5f, -1.25f), new Vector2(6.5f, -3.75f) };
+    public static Vector2[] QUEUE_POSITIONS = { new Vector2(6f, 3.75f), new Vector2(6f, 1.25f),
+                                                new Vector2(6f, -1.25f), new Vector2(6f, -3.75f) };
 
     void Start() {
         GameEvents.squarePlaced.AddListener(dealWithSquareBeingPlaced);
@@ -30,7 +31,7 @@ public class GameTracker : MonoBehaviour {
         slots = new GameObject[SIDE_LENGTH, SIDE_LENGTH];
         for (int row = 0; row < SIDE_LENGTH; row++) {
             for (int col = 0; col < SIDE_LENGTH; col++) {
-                slots[row, col] = Instantiate(slot, new Vector3(-4.5f + (float)row, -4.5f + (float)col, 0), Quaternion.identity);
+                slots[row, col] = Instantiate(slot, new Vector3(-5.5f + (float)row, -4.5f + (float)col, 0), Quaternion.identity);
             }
         }
 
@@ -45,7 +46,7 @@ public class GameTracker : MonoBehaviour {
         nodes = new GameObject[SIDE_LENGTH - 1, SIDE_LENGTH - 1];
         for (int row = 0; row < SIDE_LENGTH - 1; row++) {
             for (int col = 0; col < SIDE_LENGTH - 1; col++) {
-                nodes[row, col] = Instantiate(node, new Vector3(-4 + row, -4f + col, 0), Quaternion.identity);
+                nodes[row, col] = Instantiate(node, new Vector3(-5f + row, -4f + col, 0), Quaternion.identity);
             }
         }
 
@@ -55,7 +56,6 @@ public class GameTracker : MonoBehaviour {
                 nodes[row, col].GetComponent<Node>().setNeighbours();
             }
         }
-
     }
 
     void Update() {
@@ -83,6 +83,7 @@ public class GameTracker : MonoBehaviour {
         else {
             if (slotsAreFinalised()) {
                 playable = true;
+                nextBackground.GetComponent<NextBackground>().setPlayable();
             }
         }
     }
@@ -96,6 +97,7 @@ public class GameTracker : MonoBehaviour {
         queuedSquares[3].GetComponent<Square>().positionInQueue = 3;
 
         playable = false;
+        nextBackground.GetComponent<NextBackground>().setWaiting();
         needToGoAgain = true;
     }
 
@@ -118,10 +120,6 @@ public class GameTracker : MonoBehaviour {
             }
 
             GameEvents.slotAnimationTime.Invoke();
-        }
-
-        if (slots[5, 3].GetComponent<Slot>().anim.GetAnimatorTransitionInfo(0).IsName("red -> green") & slots[5, 3].GetComponent<Slot>().colour == Colour.RED) {
-
         }
     }
 
