@@ -4,16 +4,33 @@ using UnityEngine;
 
 public class Slot : MonoBehaviour {
     public Animator anim;
+    public Sprite redSprite;
+    public Sprite greenSprite;
+    public Sprite blueSprite;
+    public Sprite yellowSprite;
+    public Sprite noneSprite;
+    private Animator transitionAnim;
     public Colour colour;
     private GameObject upNeighbourSlot;
     private GameObject rightNeighbourSlot;
     private GameObject downNeighbourSlot;
     private GameObject leftNeighbourSlot;
+    private bool noneFlag;
     private bool redFlag;
     private bool greenFlag;
     private bool blueFlag;
     private bool yellowFlag;
-    private bool toBeDestroyed;
+
+    private void Start() {
+        GameEvents.slotAnimationTime.AddListener(changeColourIfNecessary);
+        transitionAnim = transform.GetChild(0).gameObject.GetComponent<Animator>();
+    }
+
+    private void Update() {
+        /*if (transform.position == new Vector3(1.5f, -0.5f, 0f)) {
+            print(colour);
+        }*/
+    }
 
     public void setNeighbours() {
         RaycastHit2D ray;
@@ -39,6 +56,7 @@ public class Slot : MonoBehaviour {
     }
 
     public void setColour(Colour newColour) {
+
         colour = newColour;
 
         switch (colour) {
@@ -60,8 +78,8 @@ public class Slot : MonoBehaviour {
         }        
     }
 
-    public void setNeighbourFlags(int pos) {
-        toBeDestroyed = true;
+    public void setSlotFlags(int pos) {
+        noneFlag = true;
 
         switch (pos) {
             case 0:
@@ -117,40 +135,96 @@ public class Slot : MonoBehaviour {
     }
 
     public void resolveFlags() {
-        int flagNumber = 0;
-        if (redFlag) {
-            setColour(Colour.RED);
+        if (noneFlag) {
             redFlag = false;
-            flagNumber++;
-        }
-        if (greenFlag) {
-            setColour(Colour.GREEN);
             greenFlag = false;
-            flagNumber++;
-        }
-        if (blueFlag) {
-            setColour(Colour.BLUE);
             blueFlag = false;
-            flagNumber++;
-        }
-        if (yellowFlag) {
-            setColour(Colour.YELLOW);
             yellowFlag = false;
-            flagNumber++;
         }
+        else {
+            int flagNumber = 0;
+            if (redFlag) {
+                flagNumber++;
+            }
+            if (greenFlag) {
+                flagNumber++;
+            }
+            if (blueFlag) {
+                flagNumber++;
+            }
+            if (yellowFlag) {
+                flagNumber++;
+            }
 
-        if (flagNumber > 1 | toBeDestroyed) {
-            setColour(Colour.NONE);
+            if (flagNumber > 1) {
+                noneFlag = true;
+                redFlag = false;
+                greenFlag = false;
+                blueFlag = false;
+                yellowFlag = false;
+            }
         }
-
-        toBeDestroyed = false;
     }
 
-    public void invokeResolveLoop() {
-        print("we invoking");
-        if (!GameTracker.resolveColoursLoopBeenInvoked) {
-            GameTracker.resolveColoursLoopBeenInvoked = true;
-            GameTracker.doAResolveColoursLoop();
+    private void changeColourIfNecessary() {
+        if (noneFlag) {
+            anim.SetTrigger("disappear");
+            colour = Colour.NONE;
         }
+        else if (redFlag) {
+            anim.SetTrigger("become red");
+            transitionAnim.SetTrigger("become red");
+            colour = Colour.RED;
+        }
+        else if (greenFlag) {
+            anim.SetTrigger("become green");
+            transitionAnim.SetTrigger("become green");
+            colour = Colour.GREEN;
+        }
+        else if (blueFlag) {
+            anim.SetTrigger("become blue");
+            transitionAnim.SetTrigger("become blue");
+            colour = Colour.BLUE;
+        }
+        else if (yellowFlag) {
+            anim.SetTrigger("become yellow");
+            transitionAnim.SetTrigger("become yellow");
+            colour = Colour.YELLOW;
+        }
+
+        noneFlag = false;
+        redFlag = false;
+        greenFlag = false;
+        blueFlag = false;
+        yellowFlag = false;
+    }
+
+    public bool slotIsFinalised() {
+        bool spriteCorrect = false;
+        bool animationStateCorrect = false;
+        switch(colour) {
+            case Colour.RED:
+                spriteCorrect = GetComponent<SpriteRenderer>().sprite == redSprite;
+                animationStateCorrect = anim.GetCurrentAnimatorStateInfo(0).IsName("red");
+                break;
+            case Colour.GREEN:
+                spriteCorrect = GetComponent<SpriteRenderer>().sprite == greenSprite;
+                animationStateCorrect = anim.GetCurrentAnimatorStateInfo(0).IsName("green");
+                break;
+            case Colour.BLUE:
+                spriteCorrect = GetComponent<SpriteRenderer>().sprite == blueSprite;
+                animationStateCorrect = anim.GetCurrentAnimatorStateInfo(0).IsName("blue");
+                break;
+            case Colour.YELLOW:
+                spriteCorrect = GetComponent<SpriteRenderer>().sprite == yellowSprite;
+                animationStateCorrect = anim.GetCurrentAnimatorStateInfo(0).IsName("yellow");
+                break;
+            case Colour.NONE:
+                spriteCorrect = GetComponent<SpriteRenderer>().sprite == noneSprite;
+                animationStateCorrect = anim.GetCurrentAnimatorStateInfo(0).IsName("none");
+                break;
+        }
+
+        return spriteCorrect & animationStateCorrect;
     }
 }

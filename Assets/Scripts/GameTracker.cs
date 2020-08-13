@@ -11,7 +11,7 @@ public class GameTracker : MonoBehaviour {
     public static int SIDE_LENGTH = 10;
     public static bool holdingSquare;
     public static bool playable = true;
-    public static bool resolveColoursLoopBeenInvoked;
+    public static bool needToGoAgain;
     public static Vector2[] QUEUE_POSITIONS = { new Vector2(6.5f, 3.75f), new Vector2(6.5f, 1.25f),
                                                 new Vector2(6.5f, -1.25f), new Vector2(6.5f, -3.75f) };
 
@@ -58,7 +58,7 @@ public class GameTracker : MonoBehaviour {
 
     void Update() {
         if (playable) {
-            resolveColoursLoopBeenInvoked = false;
+            //print("playable");
             if (Input.GetMouseButtonDown(0)) {
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 RaycastHit2D ray = Physics2D.Raycast(mousePos, Vector2.zero);
@@ -67,13 +67,27 @@ public class GameTracker : MonoBehaviour {
                     ray.collider.GetComponent<Square>().startBeingHeld();
                 }
             }
+
+            if (Input.GetKeyDown("right") | Input.GetKeyDown("d")) {
+                GameEvents.rightPressed.Invoke();
+            }
+            else if (Input.GetKeyDown("left") | Input.GetKeyDown("a")) {
+                GameEvents.leftPressed.Invoke();
+            }
         }
 
-        if (Input.GetKeyDown("right") | Input.GetKeyDown("d")) {
-            GameEvents.rightPressed.Invoke();
+        else if (needToGoAgain) {
+            //print("need to go again");
+            if (slotsAreFinalised()) {
+                doAResolveColoursLoop();
+            }
         }
-        else if (Input.GetKeyDown("left") | Input.GetKeyDown("a")) {
-            GameEvents.leftPressed.Invoke();
+
+        else {
+            //print("waiting for slots");
+            if (slotsAreFinalised()) {
+                playable = true;
+            }
         }
     }
 
@@ -81,52 +95,44 @@ public class GameTracker : MonoBehaviour {
         // Instantiate new square
         GameObject newSquare = Instantiate(square, QUEUE_POSITIONS[3], Quaternion.identity);
         newSquare.GetComponent<Square>().positionInQueue = 3;
-
         playable = false;
-        doAResolveColoursLoop();
+        needToGoAgain = true;
     }
 
     public static void doAResolveColoursLoop() {
-        playable = true;
+        needToGoAgain = false;
 
         // Check nodes for single colour and then set slot flags if they are
         for (int row = 0; row < SIDE_LENGTH - 1; row++) {
             for (int col = 0; col < SIDE_LENGTH - 1; col++) {
-                nodes[row, col].GetComponent<Node>().checkNeighboursHaveSingleColour();  // playable set false if single colour node found
+                nodes[row, col].GetComponent<Node>().checkNeighboursHaveSingleColour();  // set needToGoAgain true if a single colour node is found
             }
         }
 
-        // Set all the colours to NONE for single colour nodes, remove the flag, play animation
-        for (int row = 0; row < SIDE_LENGTH - 1; row++) {
-            for (int col = 0; col < SIDE_LENGTH - 1; col++) {
-                if (nodes[row, col].GetComponent<Node>().allSlotsTheSameColour) {
-                    nodes[row, col].GetComponent<Node>().removeColours();
-                    nodes[row, col].GetComponent<Node>().allSlotsTheSameColour = false;
+        if (needToGoAgain) {
+            // Resolve all slot flags
+            for (int row = 0; row < SIDE_LENGTH; row++) {
+                for (int col = 0; col < SIDE_LENGTH; col++) {
+                    slots[row, col].GetComponent<Slot>().resolveFlags();
                 }
             }
-        }
 
-        // Resolve all slot colours
+            GameEvents.slotAnimationTime.Invoke();
+        }
+    }
+
+    public static bool slotsAreFinalised() {
+        bool slotsDone = true;
         for (int row = 0; row < SIDE_LENGTH; row++) {
             for (int col = 0; col < SIDE_LENGTH; col++) {
-                slots[row, col].GetComponent<Slot>().resolveFlags();
-            }
-        }
-
-        // Check for game over
-        bool canPlaceASquare = false;
-        for (int row = 0; row < SIDE_LENGTH - 1; row++) {
-            for (int col = 0; col < SIDE_LENGTH - 1; col++) {
-                if (nodes[row, col].GetComponent<Node>().neighboursAreEmpty()) {
-                    canPlaceASquare = true;
-                    break;
+                if (!slots[row, col].GetComponent<Slot>().slotIsFinalised()) {
+                    slotsDone = false;
+                    goto Over;
                 }
             }
         }
 
-        if (!canPlaceASquare) {
-            print("Game Over!");
-        }
+        Over: return slotsDone;
     }
 }
 

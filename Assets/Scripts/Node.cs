@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Node : MonoBehaviour {
-    private GameObject topLeftSlot;
-    private GameObject topRightSlot;
-    private GameObject bottomRightSlot;
-    private GameObject bottomLeftSlot;
-    public bool allSlotsTheSameColour;
+    public GameObject topLeftSlot;
+    public GameObject topRightSlot;
+    public GameObject bottomRightSlot;
+    public GameObject bottomLeftSlot;
 
     public void setNeighbours() {
         RaycastHit2D ray;
@@ -47,17 +46,17 @@ public class Node : MonoBehaviour {
         Colour bottomRightColour = bottomRightSlot.GetComponent<Slot>().colour;
         Colour bottomLeftColour = bottomLeftSlot.GetComponent<Slot>().colour;
 
-        allSlotsTheSameColour = topLeftColour != Colour.NONE &&
+        bool allSlotsTheSameColour = topLeftColour != Colour.NONE &&
             topLeftColour == topRightColour &&
             topLeftColour == bottomRightColour &&
             topLeftColour == bottomLeftColour;
 
         if (allSlotsTheSameColour) {
-            GameTracker.playable = false;
-            topLeftSlot.GetComponent<Slot>().setNeighbourFlags(0);
-            topRightSlot.GetComponent<Slot>().setNeighbourFlags(1);
-            bottomRightSlot.GetComponent<Slot>().setNeighbourFlags(2);
-            bottomLeftSlot.GetComponent<Slot>().setNeighbourFlags(3);
+            GameTracker.needToGoAgain = true;
+            topLeftSlot.GetComponent<Slot>().setSlotFlags(0);
+            topRightSlot.GetComponent<Slot>().setSlotFlags(1);
+            bottomRightSlot.GetComponent<Slot>().setSlotFlags(2);
+            bottomLeftSlot.GetComponent<Slot>().setSlotFlags(3);
         }
     }
 
