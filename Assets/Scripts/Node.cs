@@ -53,10 +53,10 @@ public class Node : MonoBehaviour {
 
         if (allSlotsTheSameColour) {
             GameTracker.needToGoAgain = true;
-            topLeftSlot.GetComponent<Slot>().setSlotFlags(0);
-            topRightSlot.GetComponent<Slot>().setSlotFlags(1);
-            bottomRightSlot.GetComponent<Slot>().setSlotFlags(2);
-            bottomLeftSlot.GetComponent<Slot>().setSlotFlags(3);
+            topLeftSlot.GetComponent<Slot>().setSlotFlags(0, topLeftColour);
+            topRightSlot.GetComponent<Slot>().setSlotFlags(1, topLeftColour);
+            bottomRightSlot.GetComponent<Slot>().setSlotFlags(2, topLeftColour);
+            bottomLeftSlot.GetComponent<Slot>().setSlotFlags(3, topLeftColour);
         }
     }
 

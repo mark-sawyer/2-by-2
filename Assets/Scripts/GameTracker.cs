@@ -58,7 +58,6 @@ public class GameTracker : MonoBehaviour {
 
     void Update() {
         if (playable) {
-            //print("playable");
             if (Input.GetMouseButtonDown(0)) {
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 RaycastHit2D ray = Physics2D.Raycast(mousePos, Vector2.zero);
@@ -77,14 +76,12 @@ public class GameTracker : MonoBehaviour {
         }
 
         else if (needToGoAgain) {
-            //print("need to go again");
             if (slotsAreFinalised()) {
                 doAResolveColoursLoop();
             }
         }
 
         else {
-            //print("waiting for slots");
             if (slotsAreFinalised()) {
                 playable = true;
             }
@@ -118,6 +115,10 @@ public class GameTracker : MonoBehaviour {
             }
 
             GameEvents.slotAnimationTime.Invoke();
+        }
+
+        if (slots[5, 3].GetComponent<Slot>().anim.GetAnimatorTransitionInfo(0).IsName("red -> green") & slots[5, 3].GetComponent<Slot>().colour == Colour.RED) {
+
         }
     }
 

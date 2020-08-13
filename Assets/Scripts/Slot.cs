@@ -15,21 +15,15 @@ public class Slot : MonoBehaviour {
     private GameObject rightNeighbourSlot;
     private GameObject downNeighbourSlot;
     private GameObject leftNeighbourSlot;
-    private bool noneFlag;
-    private bool redFlag;
-    private bool greenFlag;
-    private bool blueFlag;
-    private bool yellowFlag;
+    public bool noneFlag;
+    public bool redFlag;
+    public bool greenFlag;
+    public bool blueFlag;
+    public bool yellowFlag;
 
     private void Start() {
         GameEvents.slotAnimationTime.AddListener(changeColourIfNecessary);
         transitionAnim = transform.GetChild(0).gameObject.GetComponent<Animator>();
-    }
-
-    private void Update() {
-        /*if (transform.position == new Vector3(1.5f, -0.5f, 0f)) {
-            print(colour);
-        }*/
     }
 
     public void setNeighbours() {
@@ -56,8 +50,7 @@ public class Slot : MonoBehaviour {
     }
 
     public void setColour(Colour newColour) {
-
-        colour = newColour;
+        colour = newColour; 
 
         switch (colour) {
             case Colour.RED:
@@ -75,42 +68,42 @@ public class Slot : MonoBehaviour {
             case Colour.NONE:
                 anim.SetTrigger("disappear");
                 break;
-        }        
+        }
     }
 
-    public void setSlotFlags(int pos) {
-        noneFlag = true;
+    public void setSlotFlags(int pos, Colour singleColour) {
+        noneFlag = true; 
 
         switch (pos) {
             case 0:
-                if (upNeighbourSlot != null && upNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                if (upNeighbourSlot != null && upNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE && upNeighbourSlot.GetComponent<Slot>().colour != singleColour) {
                     upNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
                 }
-                if (leftNeighbourSlot != null && leftNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                if (leftNeighbourSlot != null && leftNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE && leftNeighbourSlot.GetComponent<Slot>().colour != singleColour) {
                     leftNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
                 }
                 break;
             case 1:
-                if (upNeighbourSlot != null && upNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                if (upNeighbourSlot != null && upNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE && upNeighbourSlot.GetComponent<Slot>().colour != singleColour) {
                     upNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
                 }
-                if (rightNeighbourSlot != null && rightNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                if (rightNeighbourSlot != null && rightNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE && rightNeighbourSlot.GetComponent<Slot>().colour != singleColour) {
                     rightNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
                 }
                 break;
             case 2:
-                if (downNeighbourSlot != null && downNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                if (downNeighbourSlot != null && downNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE && downNeighbourSlot.GetComponent<Slot>().colour != singleColour) {
                     downNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
                 }
-                if (rightNeighbourSlot != null && rightNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                if (rightNeighbourSlot != null && rightNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE && rightNeighbourSlot.GetComponent<Slot>().colour != singleColour) {
                     rightNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
                 }
                 break;
             case 3:
-                if (downNeighbourSlot != null && downNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                if (downNeighbourSlot != null && downNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE && downNeighbourSlot.GetComponent<Slot>().colour != singleColour) {
                     downNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
                 }
-                if (leftNeighbourSlot != null && leftNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE) {
+                if (leftNeighbourSlot != null && leftNeighbourSlot.GetComponent<Slot>().colour != Colour.NONE && leftNeighbourSlot.GetComponent<Slot>().colour != singleColour) {
                     leftNeighbourSlot.GetComponent<Slot>().setFlagBasedOnSlotColour(colour);
                 }
                 break;
@@ -118,7 +111,7 @@ public class Slot : MonoBehaviour {
     }
 
     public void setFlagBasedOnSlotColour(Colour slotToBeRemovedColour) {
-        switch(slotToBeRemovedColour) {
+        switch (slotToBeRemovedColour) {
             case Colour.RED:
                 redFlag = true;
                 break;
@@ -169,6 +162,7 @@ public class Slot : MonoBehaviour {
     private void changeColourIfNecessary() {
         if (noneFlag) {
             anim.SetTrigger("disappear");
+
             colour = Colour.NONE;
         }
         else if (redFlag) {
