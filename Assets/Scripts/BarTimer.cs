@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BarTimer : MonoBehaviour {
     public static float MAX_TIME_LEFT = 60;
     public static float timeLeft = MAX_TIME_LEFT;
+    public static float EXP_CONSTANT = -0.01609437912f;
 
     void Update() {
         transform.localScale = new Vector3(timeLeft / 6, 1, 0);
@@ -29,10 +31,10 @@ public class BarTimer : MonoBehaviour {
 
     public static float getTimeScalerFromSquaresCleared(int squaresCleared) {
         if (squaresCleared <= 100) {
-            return Mathf.Exp(-0.01609437912f * squaresCleared);
+            return Mathf.Exp(EXP_CONSTANT * squaresCleared);
         }
         else {
-            return Mathf.Exp(-0.01609437912f * 100);
+            return Mathf.Exp(EXP_CONSTANT * 100);
         }
     }
 }

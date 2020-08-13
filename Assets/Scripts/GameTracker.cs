@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameTracker : MonoBehaviour {
     public GameObject square;
@@ -10,6 +11,7 @@ public class GameTracker : MonoBehaviour {
     public GameObject node;
     public GameObject[] queuedSquares;
     public GameObject nextBackground;
+    public static GameObject scoreText;
     public Sprite greyBlock;
     public static GameObject[,] slots;
     public static GameObject[,] nodes;
@@ -23,12 +25,13 @@ public class GameTracker : MonoBehaviour {
     private static float TIME_BETWEEN_GAME_OVER_BLOCKS = 0.075f;
     private float gameOverBlocksTimer = TIME_BETWEEN_GAME_OVER_BLOCKS;
     private int gameOverSequenceRowsCompleted;
-    private static int loopThroughNumber;
     public static int score;
     public static int squaresCompleted;
+    public static int loopsInTurn;
 
     void Start() {
         GameEvents.squarePlaced.AddListener(respondToSquareBeingPlaced);
+        scoreText = GameObject.Find("Text");
 
         // Instantiate the four squares in the queue
         queuedSquares = new GameObject[4];
@@ -69,8 +72,8 @@ public class GameTracker : MonoBehaviour {
     }
 
     void Update() {
-        print(score);
-
+        print("score: " + score);
+        print("squares destroyed: " + squaresCompleted);
         // Check if player quit or restart
         if (Input.GetKeyDown(KeyCode.Escape)) {
             Application.Quit();
@@ -104,10 +107,10 @@ public class GameTracker : MonoBehaviour {
             else {
                 if (slotsAreFinalised()) {
                     playable = true;
-                    loopThroughNumber = 0;
                     playerIsAlive = !isGameOver();
                     if (playerIsAlive) {
                         nextBackground.GetComponent<NextBackground>().setPlayable();
+                        loopsInTurn = 0;
                     }
                 }
             }
@@ -134,7 +137,6 @@ public class GameTracker : MonoBehaviour {
                 }
             }
         }
-        
     }
 
     public void respondToSquareBeingPlaced() {
@@ -151,8 +153,7 @@ public class GameTracker : MonoBehaviour {
     }
 
     public static void doAResolveColoursLoop() {
-        loopThroughNumber++;
-        print(loopThroughNumber);
+        loopsInTurn++;
         needToGoAgain = false;
 
         // Check nodes for single colour and then set slot flags if they are
@@ -205,20 +206,22 @@ public class GameTracker : MonoBehaviour {
     public static void respondToSingleColourNode() {
         needToGoAgain = true;
         squaresCompleted++;
-        BarTimer.increaseTime();
-        
-        if (loopThroughNumber == 1) {
-            score += 1;
+
+        if (loopsInTurn == 1) {
+            score++;
         }
-        else if (loopThroughNumber == 2) {
+        else if (loopsInTurn == 2) {
             score += 3;
         }
-        else if (loopThroughNumber == 3) {
+        else if (loopsInTurn == 3) {
             score += 10;
         }
         else {
             score += 25;
         }
+
+        scoreText.GetComponent<Text>().text = "" + score;
+        BarTimer.increaseTime();
     }
 }
 

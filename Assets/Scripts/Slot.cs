@@ -162,7 +162,6 @@ public class Slot : MonoBehaviour {
     private void changeColourIfNecessary() {
         if (noneFlag) {
             anim.SetTrigger("disappear");
-
             colour = Colour.NONE;
         }
         else if (redFlag) {
