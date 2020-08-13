@@ -52,7 +52,7 @@ public class Node : MonoBehaviour {
             topLeftColour == bottomLeftColour;
 
         if (allSlotsTheSameColour) {
-            GameTracker.needToGoAgain = true;
+            GameTracker.respondToSingleColourNode();  // Set needToGoAgain to true, iterate squaresCompleted and score
             topLeftSlot.GetComponent<Slot>().setSlotFlags(0, topLeftColour);
             topRightSlot.GetComponent<Slot>().setSlotFlags(1, topLeftColour);
             bottomRightSlot.GetComponent<Slot>().setSlotFlags(2, topLeftColour);

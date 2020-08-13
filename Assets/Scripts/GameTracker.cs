@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameTracker : MonoBehaviour {
     public GameObject square;
@@ -22,6 +23,9 @@ public class GameTracker : MonoBehaviour {
     private static float TIME_BETWEEN_GAME_OVER_BLOCKS = 0.075f;
     private float gameOverBlocksTimer = TIME_BETWEEN_GAME_OVER_BLOCKS;
     private int gameOverSequenceRowsCompleted;
+    private static int loopThroughNumber;
+    public static int score;
+    public static int squaresCompleted;
 
     void Start() {
         GameEvents.squarePlaced.AddListener(respondToSquareBeingPlaced);
@@ -65,6 +69,16 @@ public class GameTracker : MonoBehaviour {
     }
 
     void Update() {
+        print(score);
+
+        // Check if player quit or restart
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            Application.Quit();
+        }
+        if (Input.GetKeyDown("r")) {
+            SceneManager.LoadScene(0);
+        }
+
         if (playerIsAlive) {
             if (playable) {
                 if (Input.GetMouseButtonDown(0)) {
@@ -90,6 +104,7 @@ public class GameTracker : MonoBehaviour {
             else {
                 if (slotsAreFinalised()) {
                     playable = true;
+                    loopThroughNumber = 0;
                     playerIsAlive = !isGameOver();
                     if (playerIsAlive) {
                         nextBackground.GetComponent<NextBackground>().setPlayable();
@@ -100,6 +115,7 @@ public class GameTracker : MonoBehaviour {
 
         // Player lost, game over sequence
         else {
+            BarTimer.doCountDown = false;
             gameOverBlocksTimer -= Time.deltaTime;
             if (gameOverBlocksTimer <= 0) {
                 if (gameOverSequenceRowsCompleted < 20) {
@@ -136,6 +152,8 @@ public class GameTracker : MonoBehaviour {
     }
 
     public static void doAResolveColoursLoop() {
+        loopThroughNumber++;
+        print(loopThroughNumber);
         needToGoAgain = false;
 
         // Check nodes for single colour and then set slot flags if they are
@@ -183,6 +201,24 @@ public class GameTracker : MonoBehaviour {
         }
 
     Over: return !canPlaceSquare;
+    }
+
+    public static void respondToSingleColourNode() {
+        needToGoAgain = true;
+        squaresCompleted++;
+        
+        if (loopThroughNumber == 1) {
+            score += 1;
+        }
+        else if (loopThroughNumber == 2) {
+            score += 3;
+        }
+        else if (loopThroughNumber == 3) {
+            score += 10;
+        }
+        else {
+            score += 25;
+        }
     }
 }
 
