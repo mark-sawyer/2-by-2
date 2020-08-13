@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class GameTracker : MonoBehaviour {
@@ -8,17 +9,22 @@ public class GameTracker : MonoBehaviour {
     public GameObject node;
     public GameObject[] queuedSquares;
     public GameObject nextBackground;
+    public Sprite greyBlock;
     public static GameObject[,] slots;
     public static GameObject[,] nodes;
     public static int SIDE_LENGTH = 10;
     public static bool holdingSquare;
     public static bool playable = true;
     public static bool needToGoAgain;
+    public static bool playerIsAlive = true;
     public static Vector2[] QUEUE_POSITIONS = { new Vector2(6f, 3.75f), new Vector2(6f, 1.25f),
                                                 new Vector2(6f, -1.25f), new Vector2(6f, -3.75f) };
+    private static float TIME_BETWEEN_GAME_OVER_BLOCKS = 0.075f;
+    private float gameOverBlocksTimer = TIME_BETWEEN_GAME_OVER_BLOCKS;
+    private int gameOverSequenceRowsCompleted;
 
     void Start() {
-        GameEvents.squarePlaced.AddListener(dealWithSquareBeingPlaced);
+        GameEvents.squarePlaced.AddListener(respondToSquareBeingPlaced);
 
         // Instantiate the four squares in the queue
         queuedSquares = new GameObject[4];
@@ -59,39 +65,64 @@ public class GameTracker : MonoBehaviour {
     }
 
     void Update() {
-        if (playable) {
-            if (Input.GetMouseButtonDown(0)) {
-                Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                holdingSquare = true;
-                queuedSquares[0].GetComponent<Square>().startBeingHeld();
+        if (playerIsAlive) {
+            if (playable) {
+                if (Input.GetMouseButtonDown(0)) {
+                    Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    holdingSquare = true;
+                    queuedSquares[0].GetComponent<Square>().startBeingHeld();
+                }
+
+                if (Input.GetKeyDown("right") | Input.GetKeyDown("d")) {
+                    GameEvents.rightPressed.Invoke();
+                }
+                else if (Input.GetKeyDown("left") | Input.GetKeyDown("a")) {
+                    GameEvents.leftPressed.Invoke();
+                }
             }
 
-            if (Input.GetKeyDown("right") | Input.GetKeyDown("d")) {
-                GameEvents.rightPressed.Invoke();
+            else if (needToGoAgain) {
+                if (slotsAreFinalised()) {
+                    doAResolveColoursLoop();
+                }
             }
-            else if (Input.GetKeyDown("left") | Input.GetKeyDown("a")) {
-                GameEvents.leftPressed.Invoke();
-            }
-        }
 
-        else if (needToGoAgain) {
-            if (slotsAreFinalised()) {
-                doAResolveColoursLoop();
-            }
-        }
-
-        else {
-            if (slotsAreFinalised()) {
-                playable = true;
-                nextBackground.GetComponent<NextBackground>().setPlayable();
-                if (isGameOver()) {
-                    print("ya died, laddy");
+            else {
+                if (slotsAreFinalised()) {
+                    playable = true;
+                    playerIsAlive = !isGameOver();
+                    if (playerIsAlive) {
+                        nextBackground.GetComponent<NextBackground>().setPlayable();
+                    }
                 }
             }
         }
+
+        // Player lost, game over sequence
+        else {
+            gameOverBlocksTimer -= Time.deltaTime;
+            if (gameOverBlocksTimer <= 0) {
+                if (gameOverSequenceRowsCompleted < 20) {
+                    gameOverBlocksTimer = TIME_BETWEEN_GAME_OVER_BLOCKS;
+
+                    for (int row = 0; row < 10; row++) {
+                        for (int col = 0; col < 20; col++) {
+                            if (row + col == gameOverSequenceRowsCompleted && row <= 9 && col <= 9) {
+                                slots[row, 9 - col].GetComponent<Slot>().anim.SetTrigger("game over");
+                            }
+                        }
+                    }
+                    gameOverSequenceRowsCompleted++;
+                }
+                else {
+                    print("game over");
+                }
+            }
+        }
+        
     }
 
-    public void dealWithSquareBeingPlaced() {
+    public void respondToSquareBeingPlaced() {
         // Shift current squares and instantiate new square
         for (int i = 1; i < 4; i++) {
             queuedSquares[i - 1] = queuedSquares[i];
