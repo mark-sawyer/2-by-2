@@ -72,9 +72,6 @@ public class GameTracker : MonoBehaviour {
     }
 
     void Update() {
-        print("score: " + score);
-        print("squares destroyed: " + squaresCompleted);
-
         // Check if player quit or restart
         if (Input.GetKeyDown(KeyCode.Escape)) {
             Application.Quit();
@@ -232,7 +229,6 @@ public class GameTracker : MonoBehaviour {
         loopsInTurn = 0;
         gameOverBlocksTimer = TIME_BETWEEN_GAME_OVER_BLOCKS;
         gameOverSequenceRowsCompleted = 0;
-
         SceneManager.LoadScene(0);
     }
 }

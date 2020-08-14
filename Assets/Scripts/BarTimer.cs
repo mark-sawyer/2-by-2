@@ -1,14 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class BarTimer : MonoBehaviour {
     public static float MAX_TIME_LEFT = 60;
     public static float timeLeft = MAX_TIME_LEFT;
+    public static float FIRST_BLOCK_TIME_INCREASE = 5;
+    public static float MIN_BLOCK_TIME_INCREASE = 1;
+    public static int NUMBER_OF_BLOCKS_FOR_MIN_INCREASE = 50;
+    public static float yIntercept;
+    public static float gradient;
 
     private void Start() {
         GameEvents.rWasPressed.AddListener(resetTimer);
+
+        gradient = (MIN_BLOCK_TIME_INCREASE - FIRST_BLOCK_TIME_INCREASE) / (NUMBER_OF_BLOCKS_FOR_MIN_INCREASE - 1);
+        yIntercept = FIRST_BLOCK_TIME_INCREASE - gradient;
     }
 
     private void Update() {
@@ -18,30 +27,27 @@ public class BarTimer : MonoBehaviour {
 
             if (timeLeft <= 0) {
                 GameTracker.playerIsAlive = false;
-                Destroy(GameObject.Find("timer bar left"));
-                Destroy(GameObject.Find("timer bar right"));
-                Destroy(gameObject);
             }
         }
     }
 
     public static void increaseTime() {
-        timeLeft += 10 * getTimeScalerFromSquaresCleared(GameTracker.squaresCompleted);
+        timeLeft += getTimeIncreaseFromSquaresCleared(GameTracker.squaresCompleted);
         if (timeLeft > MAX_TIME_LEFT) {
             timeLeft = MAX_TIME_LEFT;
         }
     }
 
-    public static float getTimeScalerFromSquaresCleared(int squaresCleared) {
-        if (squaresCleared < 100) {
-            return -(9 / 990) * squaresCleared + (111 / 110);
+    public static float getTimeIncreaseFromSquaresCleared(int squaresCleared) {
+        if (squaresCleared < NUMBER_OF_BLOCKS_FOR_MIN_INCREASE) {
+            return gradient * squaresCleared + yIntercept;
         }
         else {
-            return 0.1f;
+            return MIN_BLOCK_TIME_INCREASE;
         }
     }
 
     private void resetTimer() {
-        BarTimer.timeLeft = BarTimer.MAX_TIME_LEFT;
+        timeLeft = MAX_TIME_LEFT;
     }
 }
