@@ -27,6 +27,9 @@ public class BarTimer : MonoBehaviour {
 
             if (timeLeft <= 0) {
                 GameTracker.playerIsAlive = false;
+                GameObject.Find("timer bar left").GetComponent<SpriteRenderer>().enabled = false;
+                GameObject.Find("timer bar right").GetComponent<SpriteRenderer>().enabled = false;
+                GameObject.Find("timer bar").GetComponent<SpriteRenderer>().enabled = false;
             }
         }
     }
