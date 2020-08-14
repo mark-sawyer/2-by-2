@@ -6,9 +6,12 @@ using UnityEngine.UI;
 public class BarTimer : MonoBehaviour {
     public static float MAX_TIME_LEFT = 60;
     public static float timeLeft = MAX_TIME_LEFT;
-    public static float EXP_CONSTANT = -0.01609437912f;
 
-    void Update() {
+    private void Start() {
+        GameEvents.rWasPressed.AddListener(resetTimer);
+    }
+
+    private void Update() {
         transform.localScale = new Vector3(timeLeft / 6, 1, 0);
         if (GameTracker.playerIsAlive && GameTracker.playable) {
             timeLeft -= Time.deltaTime;
@@ -30,11 +33,15 @@ public class BarTimer : MonoBehaviour {
     }
 
     public static float getTimeScalerFromSquaresCleared(int squaresCleared) {
-        if (squaresCleared <= 100) {
-            return Mathf.Exp(EXP_CONSTANT * squaresCleared);
+        if (squaresCleared < 100) {
+            return -(9 / 990) * squaresCleared + (111 / 110);
         }
         else {
-            return Mathf.Exp(EXP_CONSTANT * 100);
+            return 0.1f;
         }
+    }
+
+    private void resetTimer() {
+        BarTimer.timeLeft = BarTimer.MAX_TIME_LEFT;
     }
 }

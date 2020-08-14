@@ -61,7 +61,6 @@ public class Square : MonoBehaviour {
             // Place square if it was released over a valid node
             if (!Input.GetMouseButton(0)) {
                 beingHeld = false;
-                GameTracker.holdingSquare = false;
                 if (overValidNode) {
                     validNode.setNeighbourColours(colours);
                     Destroy(gameObject);

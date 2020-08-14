@@ -16,7 +16,6 @@ public class GameTracker : MonoBehaviour {
     public static GameObject[,] slots;
     public static GameObject[,] nodes;
     public static int SIDE_LENGTH = 10;
-    public static bool holdingSquare;
     public static bool playable = true;
     public static bool needToGoAgain;
     public static bool playerIsAlive = true;
@@ -31,6 +30,7 @@ public class GameTracker : MonoBehaviour {
 
     void Start() {
         GameEvents.squarePlaced.AddListener(respondToSquareBeingPlaced);
+        GameEvents.rWasPressed.AddListener(resetVariables);
         scoreText = GameObject.Find("Text");
 
         // Instantiate the four squares in the queue
@@ -74,19 +74,18 @@ public class GameTracker : MonoBehaviour {
     void Update() {
         print("score: " + score);
         print("squares destroyed: " + squaresCompleted);
+
         // Check if player quit or restart
         if (Input.GetKeyDown(KeyCode.Escape)) {
             Application.Quit();
         }
         if (Input.GetKeyDown("r")) {
-            SceneManager.LoadScene(0);
+            GameEvents.rWasPressed.Invoke();
         }
 
         if (playerIsAlive) {
             if (playable) {
                 if (Input.GetMouseButtonDown(0)) {
-                    Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    holdingSquare = true;
                     queuedSquares[0].GetComponent<Square>().startBeingHeld();
                 }
 
@@ -222,6 +221,19 @@ public class GameTracker : MonoBehaviour {
 
         scoreText.GetComponent<Text>().text = "" + score;
         BarTimer.increaseTime();
+    }
+
+    public void resetVariables() {
+        playerIsAlive = true;
+        playable = true;
+        needToGoAgain = false;
+        score = 0;
+        squaresCompleted = 0;
+        loopsInTurn = 0;
+        gameOverBlocksTimer = TIME_BETWEEN_GAME_OVER_BLOCKS;
+        gameOverSequenceRowsCompleted = 0;
+
+        SceneManager.LoadScene(0);
     }
 }
 
