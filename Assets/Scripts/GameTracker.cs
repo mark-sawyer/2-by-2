@@ -17,10 +17,13 @@ public class GameTracker : MonoBehaviour {
     public static GameObject[,] nodes;
     public static AudioSource audioSource;
     public static AudioClip[] sparkleSounds;
+    public static AudioClip thud;
     public static int SIDE_LENGTH = 10;
     public static bool playable = true;
     public static bool needToGoAgain;
     public static bool playerIsAlive = true;
+    public static bool gameOverBlocksCompleted;
+    public static bool gameOverMessageAppeared;
     public static Vector2[] QUEUE_POSITIONS = { new Vector2(6f, 3.75f), new Vector2(6f, 1.25f),
                                                 new Vector2(6f, -1.25f), new Vector2(6f, -3.75f) };
     private static float TIME_BETWEEN_GAME_OVER_BLOCKS = 0.075f;
@@ -34,9 +37,10 @@ public class GameTracker : MonoBehaviour {
         audioSource = GetComponent<AudioSource>();
         GameEvents.squarePlaced.AddListener(respondToSquareBeingPlaced);
         GameEvents.rWasPressed.AddListener(resetVariables);
-        scoreText = GameObject.Find("Text");
+        scoreText = GameObject.Find("score text");
         sparkleSounds = new AudioClip[4] { Resources.Load<AudioClip>("Sounds/sparkle1"), Resources.Load<AudioClip>("Sounds/sparkle2"),
                                            Resources.Load<AudioClip>("Sounds/sparkle3"), Resources.Load<AudioClip>("Sounds/sparkle4") };
+        thud = Resources.Load<AudioClip>("Sounds/thud");
 
         // Instantiate the four squares in the queue
         queuedSquares = new GameObject[4];
@@ -119,22 +123,33 @@ public class GameTracker : MonoBehaviour {
 
         // Player lost, game over sequence
         else {
-            gameOverBlocksTimer -= Time.deltaTime;
-            if (gameOverBlocksTimer <= 0) {
-                if (gameOverSequenceRowsCompleted < 20) {
-                    gameOverBlocksTimer = TIME_BETWEEN_GAME_OVER_BLOCKS;
+            if (gameOverBlocksCompleted) {
+                gameOverBlocksTimer -= Time.deltaTime;
+                if (!gameOverMessageAppeared && gameOverBlocksTimer <= 0) {
+                    GameObject.Find("game over text").GetComponent<Text>().text = "PRESS R TO RESTART";
+                    gameOverMessageAppeared = true;
+                }
+            }
+            else {
+                gameOverBlocksTimer -= Time.deltaTime;
+                if (gameOverBlocksTimer <= 0) {
+                    if (gameOverSequenceRowsCompleted < 20) {
+                        audioSource.PlayOneShot(thud);
+                        gameOverBlocksTimer = TIME_BETWEEN_GAME_OVER_BLOCKS;
 
-                    for (int row = 0; row < 10; row++) {
-                        for (int col = 0; col < 20; col++) {
-                            if (row + col == gameOverSequenceRowsCompleted && row <= 9 && col <= 9) {
-                                slots[row, 9 - col].GetComponent<Slot>().anim.SetTrigger("game over");
+                        for (int row = 0; row < 10; row++) {
+                            for (int col = 0; col < 20; col++) {
+                                if (row + col == gameOverSequenceRowsCompleted && row <= 9 && col <= 9) {
+                                    slots[row, 9 - col].GetComponent<Slot>().anim.SetTrigger("game over");
+                                }
                             }
                         }
+                        gameOverSequenceRowsCompleted++;
                     }
-                    gameOverSequenceRowsCompleted++;
-                }
-                else {
-                    print("game over");
+                    else {
+                        gameOverBlocksCompleted = true;
+                        gameOverBlocksTimer = 2;
+                    }
                 }
             }
         }
@@ -237,6 +252,8 @@ public class GameTracker : MonoBehaviour {
         playerIsAlive = true;
         playable = true;
         needToGoAgain = false;
+        gameOverBlocksCompleted = false;
+        gameOverMessageAppeared = false;
         score = 0;
         squaresCompleted = 0;
         loopsInTurn = 0;
