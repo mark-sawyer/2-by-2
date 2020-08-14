@@ -15,6 +15,8 @@ public class GameTracker : MonoBehaviour {
     public Sprite greyBlock;
     public static GameObject[,] slots;
     public static GameObject[,] nodes;
+    public static AudioSource audioSource;
+    public static AudioClip[] sparkleSounds;
     public static int SIDE_LENGTH = 10;
     public static bool playable = true;
     public static bool needToGoAgain;
@@ -29,9 +31,12 @@ public class GameTracker : MonoBehaviour {
     public static int loopsInTurn;
 
     void Start() {
+        audioSource = GetComponent<AudioSource>();
         GameEvents.squarePlaced.AddListener(respondToSquareBeingPlaced);
         GameEvents.rWasPressed.AddListener(resetVariables);
         scoreText = GameObject.Find("Text");
+        sparkleSounds = new AudioClip[4] { Resources.Load<AudioClip>("Sounds/sparkle1"), Resources.Load<AudioClip>("Sounds/sparkle2"),
+                                           Resources.Load<AudioClip>("Sounds/sparkle3"), Resources.Load<AudioClip>("Sounds/sparkle4") };
 
         // Instantiate the four squares in the queue
         queuedSquares = new GameObject[4];
@@ -155,11 +160,19 @@ public class GameTracker : MonoBehaviour {
         // Check nodes for single colour and then set slot flags if they are
         for (int row = 0; row < SIDE_LENGTH - 1; row++) {
             for (int col = 0; col < SIDE_LENGTH - 1; col++) {
-                nodes[row, col].GetComponent<Node>().checkNeighboursHaveSingleColour();  // set needToGoAgain true if a single colour node is found
+                nodes[row, col].GetComponent<Node>().checkNeighboursHaveSingleColour();
             }
         }
 
+        // Entered when at least one single colour node is found
         if (needToGoAgain) {
+            if (loopsInTurn <= 3) {
+                audioSource.PlayOneShot(sparkleSounds[loopsInTurn - 1]);
+            }
+            else {
+                audioSource.PlayOneShot(sparkleSounds[3]);
+            }
+
             // Resolve all slot flags
             for (int row = 0; row < SIDE_LENGTH; row++) {
                 for (int col = 0; col < SIDE_LENGTH; col++) {
