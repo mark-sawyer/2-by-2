@@ -123,6 +123,11 @@ public class GameTracker : MonoBehaviour {
 
         // Player lost, game over sequence
         else {
+            // Move square back if it was being held
+            queuedSquares[0].GetComponent<Square>().beingHeld = false;
+            queuedSquares[0].GetComponent<Square>().setAlpha(1);
+            queuedSquares[0].transform.position = QUEUE_POSITIONS[0];
+
             if (gameOverBlocksCompleted) {
                 gameOverBlocksTimer -= Time.deltaTime;
                 if (!gameOverMessageAppeared && gameOverBlocksTimer <= 0) {

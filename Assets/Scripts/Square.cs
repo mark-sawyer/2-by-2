@@ -9,7 +9,7 @@ public class Square : MonoBehaviour {
     public Sprite yellowColour;
     public Colour[] colours = new Colour[4];
     public int positionInQueue;
-    private bool beingHeld;
+    public bool beingHeld;
     private bool isTransparent;
 
     void Start() {
