@@ -65,16 +65,16 @@ public class GameTracker : MonoBehaviour {
         }
 
         // Instantiate the nodes
-        nodes = new GameObject[SIDE_LENGTH - 1, SIDE_LENGTH - 1];
-        for (int row = 0; row < SIDE_LENGTH - 1; row++) {
-            for (int col = 0; col < SIDE_LENGTH - 1; col++) {
-                nodes[row, col] = Instantiate(node, new Vector3(-5f + row, -4f + col, 0), Quaternion.identity);
+        nodes = new GameObject[SIDE_LENGTH + 1, SIDE_LENGTH + 1];
+        for (int row = 0; row < SIDE_LENGTH + 1; row++) {
+            for (int col = 0; col < SIDE_LENGTH + 1; col++) {
+                nodes[row, col] = Instantiate(node, new Vector3(-6f + row, -5f + col, 0), Quaternion.identity);
             }
         }
 
         // Set the node neighbour references
-        for (int row = 0; row < SIDE_LENGTH - 1; row++) {
-            for (int col = 0; col < SIDE_LENGTH - 1; col++) {
+        for (int row = 0; row < SIDE_LENGTH + 1; row++) {
+            for (int col = 0; col < SIDE_LENGTH + 1; col++) {
                 nodes[row, col].GetComponent<Node>().setNeighbours();
             }
         }
@@ -178,8 +178,8 @@ public class GameTracker : MonoBehaviour {
         needToGoAgain = false;
 
         // Check nodes for single colour and then set slot flags if they are
-        for (int row = 0; row < SIDE_LENGTH - 1; row++) {
-            for (int col = 0; col < SIDE_LENGTH - 1; col++) {
+        for (int row = 1; row < SIDE_LENGTH; row++) {
+            for (int col = 1; col < SIDE_LENGTH; col++) {
                 nodes[row, col].GetComponent<Node>().checkNeighboursHaveSingleColour();
             }
         }
@@ -220,8 +220,8 @@ public class GameTracker : MonoBehaviour {
 
     private bool isGameOver() {
         bool canPlaceSquare = false;
-        for (int row = 0; row < SIDE_LENGTH - 1; row++) {
-            for (int col = 0; col < SIDE_LENGTH - 1; col++) {
+        for (int row = 1; row < SIDE_LENGTH; row++) {
+            for (int col = 1; col < SIDE_LENGTH; col++) {
                 if (nodes[row, col].GetComponent<Node>().neighboursAreEmpty()) {
                     canPlaceSquare = true;
                     goto Over;

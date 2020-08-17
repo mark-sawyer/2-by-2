@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Square : MonoBehaviour {
+    public LayerMask nodeLayer;
     public Sprite redColour;
     public Sprite greenColour;
     public Sprite blueColour;
@@ -11,20 +13,52 @@ public class Square : MonoBehaviour {
     public int positionInQueue;
     public bool beingHeld;
     private bool isTransparent;
+    private bool isTwoByOne;
+    private Vector3 twoByOnePositionAdjustment;
+
 
     void Start() {
         GameEvents.rightPressed.AddListener(rotateClockwise);
         GameEvents.leftPressed.AddListener(rotateCounterClockwise);
         GameEvents.squarePlaced.AddListener(moveUpInQueue);
 
-        // Get four random colours, at least two unique.
-        for (int i = 0; i < 4; i++) {
-            colours[i] = (Colour)Random.Range(1, 5);
-        }
+        // Choose how many little squares will be used in the piece.
+        int numberOfSquares = Random.Range(2, 5);
+        int numberOfSquaresAssigned = 0;
+        while (numberOfSquaresAssigned < numberOfSquares) {
+            int randomIndex = Random.Range(0, 4);
+            if (colours[randomIndex] == Colour.NONE) {
+                colours[randomIndex] = (Colour)Random.Range(1, 5);
+                numberOfSquaresAssigned++;
+            }
 
-        while (colours[0] == colours[1] & colours[0] == colours[2] & colours[0] == colours[3]) {
-            for (int i = 0; i < 4; i++) {
-                colours[i] = (Colour)Random.Range(1, 5);
+            // Once they're assigned, check they're not all the same colour.
+            if (numberOfSquaresAssigned == numberOfSquares) {
+                bool multipleColours = false;
+                Colour firstColourObserved = Colour.NONE;
+                for (int i = 0; i < 4; i++) {
+                    if (colours[i] != Colour.NONE) {
+                        if (firstColourObserved == Colour.NONE) {
+                            firstColourObserved = colours[i];
+                        }
+                        else if (colours[i] != firstColourObserved) {
+                            multipleColours = true;
+                            if (numberOfSquares == 2 && 
+                                !((colours[0] == Colour.NONE && colours[2] == Colour.NONE) || (colours[0] != Colour.NONE && colours[2] != Colour.NONE))) {
+
+                                isTwoByOne = true;
+                                twoByOnePositionAdjustment = getTwoByOnePositionAdjustment();
+                            }
+                            break;
+                        }
+                    }
+                }
+                if (!multipleColours) {
+                    numberOfSquaresAssigned = 0;
+                    for (int i = 0; i < 4; i++) {
+                        colours[i] = Colour.NONE;
+                    }
+                }
             }
         }
 
@@ -34,20 +68,21 @@ public class Square : MonoBehaviour {
     void Update() {
         if (beingHeld) {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            transform.position = new Vector3(mousePos.x, mousePos.y, -1);
+            if (!isTwoByOne) {
+                transform.position = new Vector3(mousePos.x, mousePos.y, -1);
+            }
+            else {
+                transform.position = new Vector3(mousePos.x, mousePos.y, -1) + twoByOnePositionAdjustment;
+            }
+            
 
             // Check if valid node is under mouse
             bool overValidNode = false;
             Node validNode = null;
-            RaycastHit2D[] rays = Physics2D.RaycastAll(transform.position, Vector2.zero);
-            for (int i = 0; i < rays.Length; i++) {
-                if (rays[i].collider.tag == "node") {
-                    if (rays[i].collider.GetComponent<Node>().neighboursAreEmpty()) {
-                        overValidNode = true;
-                        validNode = rays[i].collider.GetComponent<Node>();
-                    }
-                    break;
-                }
+            RaycastHit2D ray = Physics2D.Raycast(transform.position, Vector2.zero, 0, nodeLayer);
+            if (ray.collider != null && ray.collider.GetComponent<Node>().appropriateSlotsAreEmpty(colours)) {
+                overValidNode = true;
+                validNode = ray.collider.GetComponent<Node>();
             }
 
             // Adjust transparency if required
@@ -83,6 +118,10 @@ public class Square : MonoBehaviour {
             colours[1] = holdColour;
         }
 
+        if (isTwoByOne) {
+            twoByOnePositionAdjustment = getTwoByOnePositionAdjustment();
+        }
+
         setColourSprites();
     }
 
@@ -93,6 +132,10 @@ public class Square : MonoBehaviour {
             colours[1] = colours[2];
             colours[2] = colours[3];
             colours[3] = holdColour;
+        }
+
+        if (isTwoByOne) {
+            twoByOnePositionAdjustment = getTwoByOnePositionAdjustment();
         }
 
         setColourSprites();
@@ -112,6 +155,9 @@ public class Square : MonoBehaviour {
                     break;
                 case Colour.YELLOW:
                     transform.GetChild(i).GetComponent<SpriteRenderer>().sprite = yellowColour;
+                    break;
+                case Colour.NONE:
+                    transform.GetChild(i).GetComponent<SpriteRenderer>().sprite = null;
                     break;
             }
         }
@@ -138,5 +184,23 @@ public class Square : MonoBehaviour {
             positionInQueue--;
             transform.position = GameTracker.QUEUE_POSITIONS[positionInQueue];
         }
+    }
+
+    private Vector3 getTwoByOnePositionAdjustment() {
+        Vector3 positionAdjustment;
+        if (colours[0] == Colour.NONE && colours[1] == Colour.NONE) {
+            positionAdjustment = new Vector3(0, 0.5f, 0);
+        }
+        else if (colours[1] == Colour.NONE && colours[2] == Colour.NONE) {
+            positionAdjustment = new Vector3(0.5f, 0, 0);
+        }
+        else if (colours[2] == Colour.NONE && colours[3] == Colour.NONE) {
+            positionAdjustment = new Vector3(0, -0.5f, 0);
+        }
+        else {
+            positionAdjustment = new Vector3(-0.5f, 0, 0);
+        }
+
+        return positionAdjustment;
     }
 }

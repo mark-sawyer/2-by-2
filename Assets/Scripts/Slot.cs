@@ -50,9 +50,7 @@ public class Slot : MonoBehaviour {
     }
 
     public void setColour(Colour newColour) {
-        colour = newColour; 
-
-        switch (colour) {
+        switch (newColour) {
             case Colour.RED:
                 anim.SetTrigger("become red");
                 break;
@@ -69,6 +67,8 @@ public class Slot : MonoBehaviour {
                 anim.SetTrigger("disappear");
                 break;
         }
+
+        colour = newColour;
     }
 
     public void setSlotFlags(int pos, Colour singleColour) {

@@ -3,74 +3,81 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Node : MonoBehaviour {
-    public GameObject topLeftSlot;
-    public GameObject topRightSlot;
-    public GameObject bottomRightSlot;
-    public GameObject bottomLeftSlot;
+    public GameObject[] slotNeighbours = new GameObject[4];
 
     public void setNeighbours() {
         RaycastHit2D ray;
         ray = Physics2D.Raycast((Vector2)transform.position + new Vector2(-0.5f, 0.5f), Vector2.zero);
         if (ray.collider != null) {
-            topLeftSlot = ray.collider.gameObject;
+            slotNeighbours[0] = ray.collider.gameObject;
         }
 
         ray = Physics2D.Raycast((Vector2)transform.position + new Vector2(0.5f, 0.5f), Vector2.zero);
         if (ray.collider != null) {
-            topRightSlot = ray.collider.gameObject;
+            slotNeighbours[1] = ray.collider.gameObject;
         }
 
         ray = Physics2D.Raycast((Vector2)transform.position + new Vector2(0.5f, -0.5f), Vector2.zero);
         if (ray.collider != null) {
-            bottomRightSlot = ray.collider.gameObject;
+            slotNeighbours[2] = ray.collider.gameObject;
         }
 
         ray = Physics2D.Raycast((Vector2)transform.position + new Vector2(-0.5f, -0.5f), Vector2.zero);
         if (ray.collider != null) {
-            bottomLeftSlot = ray.collider.gameObject;
+            slotNeighbours[3] = ray.collider.gameObject;
         }
     }
 
+    public bool appropriateSlotsAreEmpty(Colour[] squareColours) {
+        bool[] validNeighbours = new bool[4] { true, true, true, true };
+
+        for (int i = 0; i < 4; i++) {
+            if (slotNeighbours[i] != null) {
+                validNeighbours[i] = squareColours[i] == Colour.NONE || slotNeighbours[i].GetComponent<Slot>().colour == Colour.NONE;
+            }
+            else {
+                validNeighbours[i] = squareColours[i] == Colour.NONE;
+            }
+        }
+
+        return validNeighbours[0] && validNeighbours[1] && validNeighbours[2] && validNeighbours[3];
+    }
+
     public bool neighboursAreEmpty() {
-        bool topLeftEmpty = topLeftSlot.GetComponent<Slot>().colour == Colour.NONE;
-        bool topRightEmpty = topRightSlot.GetComponent<Slot>().colour == Colour.NONE;
-        bool bottomRightEmpty = bottomRightSlot.GetComponent<Slot>().colour == Colour.NONE;
-        bool bottomLeftEmpty = bottomLeftSlot.GetComponent<Slot>().colour == Colour.NONE;
+        bool topLeftEmpty = slotNeighbours[0].GetComponent<Slot>().colour == Colour.NONE;
+        bool topRightEmpty = slotNeighbours[1].GetComponent<Slot>().colour == Colour.NONE;
+        bool bottomRightEmpty = slotNeighbours[2].GetComponent<Slot>().colour == Colour.NONE;
+        bool bottomLeftEmpty = slotNeighbours[3].GetComponent<Slot>().colour == Colour.NONE;
 
         return topLeftEmpty && topRightEmpty && bottomRightEmpty && bottomLeftEmpty;
     }
 
     public void checkNeighboursHaveSingleColour() {
-        Colour topLeftColour = topLeftSlot.GetComponent<Slot>().colour;
-        Colour topRightColour = topRightSlot.GetComponent<Slot>().colour;
-        Colour bottomRightColour = bottomRightSlot.GetComponent<Slot>().colour;
-        Colour bottomLeftColour = bottomLeftSlot.GetComponent<Slot>().colour;
+        Colour[] slotColours = new Colour[4];
 
-        bool allSlotsTheSameColour = topLeftColour != Colour.NONE &&
-            topLeftColour == topRightColour &&
-            topLeftColour == bottomRightColour &&
-            topLeftColour == bottomLeftColour;
+        for (int i = 0; i < 4; i++) {
+            slotColours[i] = slotNeighbours[i].GetComponent<Slot>().colour;
+        }
+
+        bool allSlotsTheSameColour = slotColours[0] != Colour.NONE &&
+            slotColours[0] == slotColours[1] &&
+            slotColours[0] == slotColours[2] &&
+            slotColours[0] == slotColours[3];
 
         if (allSlotsTheSameColour) {
             GameTracker.respondToSingleColourNode();  // Set needToGoAgain to true, iterate squaresCompleted and score
-            topLeftSlot.GetComponent<Slot>().setSlotFlags(0, topLeftColour);
-            topRightSlot.GetComponent<Slot>().setSlotFlags(1, topLeftColour);
-            bottomRightSlot.GetComponent<Slot>().setSlotFlags(2, topLeftColour);
-            bottomLeftSlot.GetComponent<Slot>().setSlotFlags(3, topLeftColour);
+
+            for (int i = 0; i < 4; i++) {
+                slotNeighbours[i].GetComponent<Slot>().setSlotFlags(i, slotColours[i]);
+            }
         }
     }
 
     public void setNeighbourColours(Colour[] colours) {
-        topLeftSlot.GetComponent<Slot>().setColour(colours[0]);
-        topRightSlot.GetComponent<Slot>().setColour(colours[1]);
-        bottomRightSlot.GetComponent<Slot>().setColour(colours[2]);
-        bottomLeftSlot.GetComponent<Slot>().setColour(colours[3]);
-    }
-
-    public void removeColours() {
-        topLeftSlot.GetComponent<Slot>().setColour(Colour.NONE);
-        topRightSlot.GetComponent<Slot>().setColour(Colour.NONE);
-        bottomRightSlot.GetComponent<Slot>().setColour(Colour.NONE);
-        bottomLeftSlot.GetComponent<Slot>().setColour(Colour.NONE);
+        for (int i = 0; i < 4; i++) {
+            if (slotNeighbours[i] != null && colours[i] != Colour.NONE) {
+                slotNeighbours[i].GetComponent<Slot>().setColour(colours[i]);
+            } 
+        }
     }
 }

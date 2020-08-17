@@ -96,12 +96,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d25c250f8589a21498e4a75f2a6d2a93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nodeLayer:
+    serializedVersion: 2
+    m_Bits: 256
   redColour: {fileID: 21300000, guid: 2df4f7cd7870ae94eba942c015f8217a, type: 3}
   greenColour: {fileID: 21300000, guid: 7f0c5e7647d53284b99ef24c8360a70b, type: 3}
   blueColour: {fileID: 21300000, guid: bb2144ca6621d7e469692726620e4c20, type: 3}
   yellowColour: {fileID: 21300000, guid: e2d811d6eb71fc745a79911abf55ce75, type: 3}
-  colours: 02000000020000000200000002000000
+  colours: 00000000000000000000000000000000
   positionInQueue: 1
+  beingHeld: 0
 --- !u!1001 &230558977198722218
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -120,6 +124,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 929ac686e6e951c42a8ffc015845323c,
         type: 3}
+    - target: {fileID: 1671586535689048919, guid: ab3a2ca409cafaf4ab2aa217f58bd7c9,
+        type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1721854900189771206, guid: ab3a2ca409cafaf4ab2aa217f58bd7c9,
         type: 3}
       propertyPath: m_Name
@@ -206,6 +215,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 929ac686e6e951c42a8ffc015845323c,
         type: 3}
+    - target: {fileID: 1671586535689048919, guid: ab3a2ca409cafaf4ab2aa217f58bd7c9,
+        type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1721854900189771206, guid: ab3a2ca409cafaf4ab2aa217f58bd7c9,
         type: 3}
       propertyPath: m_Name
@@ -292,6 +306,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 929ac686e6e951c42a8ffc015845323c,
         type: 3}
+    - target: {fileID: 1671586535689048919, guid: ab3a2ca409cafaf4ab2aa217f58bd7c9,
+        type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1721854900189771206, guid: ab3a2ca409cafaf4ab2aa217f58bd7c9,
         type: 3}
       propertyPath: m_Name
@@ -378,6 +397,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 929ac686e6e951c42a8ffc015845323c,
         type: 3}
+    - target: {fileID: 1671586535689048919, guid: ab3a2ca409cafaf4ab2aa217f58bd7c9,
+        type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1721854900189771206, guid: ab3a2ca409cafaf4ab2aa217f58bd7c9,
         type: 3}
       propertyPath: m_Name
