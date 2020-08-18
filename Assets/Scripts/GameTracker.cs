@@ -220,9 +220,10 @@ public class GameTracker : MonoBehaviour {
 
     private bool isGameOver() {
         bool canPlaceSquare = false;
+
         for (int row = 1; row < SIDE_LENGTH; row++) {
             for (int col = 1; col < SIDE_LENGTH; col++) {
-                if (nodes[row, col].GetComponent<Node>().neighboursAreEmpty()) {
+                if (nodes[row, col].GetComponent<Node>().neighboursAreEmpty(queuedSquares[0])) {
                     canPlaceSquare = true;
                     goto Over;
                 }
