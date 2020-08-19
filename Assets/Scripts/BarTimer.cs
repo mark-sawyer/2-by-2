@@ -5,11 +5,11 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class BarTimer : MonoBehaviour {
-    public static float MAX_TIME_LEFT = 120;
+    public static float MAX_TIME_LEFT = 60;
     public static float timeLeft = MAX_TIME_LEFT;
     public static float FIRST_BLOCK_TIME_INCREASE = 5;
     public static float MIN_BLOCK_TIME_INCREASE = 1;
-    public static int NUMBER_OF_BLOCKS_FOR_MIN_INCREASE = 100;
+    public static int NUMBER_OF_BLOCKS_FOR_MIN_INCREASE = 50;
     public static float yIntercept;
     public static float gradient;
 
@@ -21,7 +21,7 @@ public class BarTimer : MonoBehaviour {
     }
 
     private void Update() {
-        transform.localScale = new Vector3(timeLeft / (MAX_TIME_LEFT / 10), 1, 0);
+        transform.localScale = new Vector3(timeLeft / 6, 1, 0);
         if (GameTracker.playerIsAlive && GameTracker.playable) {
             timeLeft -= Time.deltaTime;
 

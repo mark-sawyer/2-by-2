@@ -13,9 +13,8 @@ public class Square : MonoBehaviour {
     public int positionInQueue;
     public bool beingHeld;
     private bool isTransparent;
-    public bool isTwoByOne;
+    private bool isTwoByOne;
     private Vector3 twoByOnePositionAdjustment;
-    public int numberOfSquares;
 
 
     void Start() {
@@ -24,7 +23,7 @@ public class Square : MonoBehaviour {
         GameEvents.squarePlaced.AddListener(moveUpInQueue);
 
         // Choose how many little squares will be used in the piece.
-        numberOfSquares = Random.Range(2, 5);
+        int numberOfSquares = Random.Range(2, 5);
         int numberOfSquaresAssigned = 0;
         while (numberOfSquaresAssigned < numberOfSquares) {
             int randomIndex = Random.Range(0, 4);
@@ -32,35 +31,13 @@ public class Square : MonoBehaviour {
                 colours[randomIndex] = (Colour)Random.Range(1, 5);
                 numberOfSquaresAssigned++;
             }
+        }
 
-            // Once they're assigned, check they're not all the same colour.
-            if (numberOfSquaresAssigned == numberOfSquares) {
-                bool multipleColours = false;
-                Colour firstColourObserved = Colour.NONE;
-                for (int i = 0; i < 4; i++) {
-                    if (colours[i] != Colour.NONE) {
-                        if (firstColourObserved == Colour.NONE) {
-                            firstColourObserved = colours[i];
-                        }
-                        else if (colours[i] != firstColourObserved) {
-                            multipleColours = true;
-                            if (numberOfSquares == 2 && 
-                                !((colours[0] == Colour.NONE && colours[2] == Colour.NONE) || (colours[0] != Colour.NONE && colours[2] != Colour.NONE))) {
-
-                                isTwoByOne = true;
-                                twoByOnePositionAdjustment = getTwoByOnePositionAdjustment();
-                            }
-                            break;
-                        }
-                    }
-                }
-                if (!multipleColours) {
-                    numberOfSquaresAssigned = 0;
-                    for (int i = 0; i < 4; i++) {
-                        colours[i] = Colour.NONE;
-                    }
-                }
-            }
+        // Adjust hold position of two by one squares.
+        if (numberOfSquares == 2 &&
+            !((colours[0] == Colour.NONE && colours[2] == Colour.NONE) || (colours[0] != Colour.NONE && colours[2] != Colour.NONE))) {
+            isTwoByOne = true;
+            twoByOnePositionAdjustment = getTwoByOnePositionAdjustment();
         }
 
         setColourSprites();
