@@ -8,7 +8,7 @@ public class BarTimer : MonoBehaviour {
     public static float MAX_TIME_LEFT = 60;
     public static float timeLeft = MAX_TIME_LEFT;
     public static float FIRST_BLOCK_TIME_INCREASE = 5;
-    public static float MIN_BLOCK_TIME_INCREASE = 1;
+    public static float MIN_BLOCK_TIME_INCREASE = 2;
     public static int NUMBER_OF_BLOCKS_FOR_MIN_INCREASE = 50;
     public static float yIntercept;
     public static float gradient;

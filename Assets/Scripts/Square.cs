@@ -13,7 +13,8 @@ public class Square : MonoBehaviour {
     public int positionInQueue;
     public bool beingHeld;
     private bool isTransparent;
-    private bool isTwoByOne;
+    public bool isTwoByOne;
+    public int numberOfSquares;
     private Vector3 twoByOnePositionAdjustment;
 
 
@@ -23,7 +24,7 @@ public class Square : MonoBehaviour {
         GameEvents.squarePlaced.AddListener(moveUpInQueue);
 
         // Choose how many little squares will be used in the piece.
-        int numberOfSquares = Random.Range(2, 5);
+        numberOfSquares = Random.Range(2, 5);
         int numberOfSquaresAssigned = 0;
         while (numberOfSquaresAssigned < numberOfSquares) {
             int randomIndex = Random.Range(0, 4);

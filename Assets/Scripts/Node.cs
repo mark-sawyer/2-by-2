@@ -43,13 +43,44 @@ public class Node : MonoBehaviour {
         return validNeighbours[0] && validNeighbours[1] && validNeighbours[2] && validNeighbours[3];
     }
 
-    public bool neighboursAreEmpty() {
-        bool topLeftEmpty = slotNeighbours[0].GetComponent<Slot>().colour == Colour.NONE;
-        bool topRightEmpty = slotNeighbours[1].GetComponent<Slot>().colour == Colour.NONE;
-        bool bottomRightEmpty = slotNeighbours[2].GetComponent<Slot>().colour == Colour.NONE;
-        bool bottomLeftEmpty = slotNeighbours[3].GetComponent<Slot>().colour == Colour.NONE;
+    public bool neighboursAreEmpty(GameObject nextInQueue) {
+        bool squareIsPlaceable = false;
+        int numberEmpty = 0; for (int i = 0; i < 4; i++) {
+            if (slotNeighbours[i].GetComponent<Slot>().colour == Colour.NONE) {
+                numberEmpty++;
+            }
+        }
 
-        return topLeftEmpty && topRightEmpty && bottomRightEmpty && bottomLeftEmpty;
+        switch (nextInQueue.GetComponent<Square>().numberOfSquares) {
+            case 4:
+                if (numberEmpty == 4) {
+                    squareIsPlaceable = true;
+                }
+                break;
+            case 3:
+                if (numberEmpty >= 3) {
+                    squareIsPlaceable = true;
+                }
+                break;
+            case 2:
+                if (numberEmpty >= 3) {
+                    squareIsPlaceable = true;
+                }
+                else if (numberEmpty == 2) {
+                    bool isTwoByOne = !((slotNeighbours[0].GetComponent<Slot>().colour == Colour.NONE &&
+                                         slotNeighbours[2].GetComponent<Slot>().colour == Colour.NONE) ||
+                                        (slotNeighbours[0].GetComponent<Slot>().colour != Colour.NONE &&
+                                         slotNeighbours[2].GetComponent<Slot>().colour != Colour.NONE));
+
+                    if ((nextInQueue.GetComponent<Square>().isTwoByOne && isTwoByOne) ||
+                        (!nextInQueue.GetComponent<Square>().isTwoByOne && !isTwoByOne)) {
+                        squareIsPlaceable = true;
+                    }
+                }
+                break;
+        }
+
+        return squareIsPlaceable;
     }
 
     public void checkNeighboursHaveSingleColour() {
